@@ -24,7 +24,7 @@ git remote add origin <你的 GitHub 仓库地址>
 git push -u origin main
 ```
 
-仓库名建议：`ai-boss-quiz`
+仓库名建议：`ai-personality-test`
 
 ## 2. 走 Cloudflare Pages
 
