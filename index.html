@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI人格测试：15道题，测测你是AI圈的哪位大佬。从 Sam Altman 到图灵祖师爷，20种结果，1个隐藏人物。纯前端单文件，可本地打开，也可直接部署。">
+<meta name="theme-color" content="#06060e">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="AI人格测试｜测测你是AI圈的哪位大佬？">
+<meta property="og:description" content="15道题，测测你是AI圈的哪位大佬。从 Sam Altman 到图灵祖师爷，20种结果，1个隐藏人物。">
+<meta property="og:type" content="website">
+<title>AI人格测试｜测测你是AI圈的哪位大佬？</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060e;
+  --surface: #0d0d1c;
+  --card: #0f0f1e;
+  --border: #1c1c30;
+  --border-hover: #2e2e50;
+  --accent: #b8ff00;
+  --accent-dim: rgba(184,255,0,0.12);
+  --accent2: #ff6c35;
+  --gold: #f0c040;
+  --text: #e4e4f0;
+  --muted: #5a5a7a;
+  --muted2: #3a3a5c;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;color-scheme:dark;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Noto Sans SC',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(184,255,0,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,255,0,0.025) 1px, transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';
+  position:fixed;top:0;left:0;right:0;height:280px;
+  background:radial-gradient(ellipse 60% 280px at 50% 0%, rgba(184,255,0,0.06) 0%, transparent 100%);
+  pointer-events:none;z-index:0;
+}
+.wrap{max-width:660px;margin:0 auto;padding:0 24px;position:relative;z-index:1;width:100%;}
+
+/* ── SCAN LINE ANIMATION ── */
+@keyframes scanline{0%{transform:translateY(-100%);}100%{transform:translateY(100vh);}}
+.scanline{
+  position:fixed;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, transparent, rgba(184,255,0,0.15), transparent);
+  animation:scanline 8s linear infinite;
+  pointer-events:none;z-index:999;
+}
+
+/* ─────────────────────────
+   LANDING
+───────────────────────── */
+#landing{
+  min-height:100vh;min-height:100svh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:80px 24px;
+}
+.l-eyebrow{
+  font-family:'Fira Code',monospace;font-size:11px;
+  color:var(--accent);letter-spacing:.18em;text-transform:uppercase;
+  margin-bottom:28px;opacity:.8;
+  display:flex;align-items:center;gap:10px;justify-content:center;
+}
+.l-eyebrow::before,.l-eyebrow::after{content:'';width:32px;height:1px;background:var(--accent);opacity:.4;}
+.l-title{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(2.6rem,9vw,5rem);line-height:1.08;
+  letter-spacing:-.03em;margin-bottom:10px;
+}
+.l-title .hi{color:var(--accent);}
+.l-sub{
+  font-size:1.05rem;color:var(--muted);margin-bottom:10px;
+  max-width:400px;line-height:1.7;
+}
+.l-meta{
+  font-family:'Fira Code',monospace;font-size:11px;
+  color:var(--muted2);margin-bottom:44px;letter-spacing:.05em;
+}
+.l-meta span{color:var(--accent);opacity:.7;}
+.btn-primary{
+  background:var(--accent);color:#06060e;border:none;
+  padding:16px 52px;font-family:'Syne',sans-serif;
+  font-size:1.05rem;font-weight:800;cursor:pointer;
+  letter-spacing:.06em;transition:transform .2s, box-shadow .2s, opacity .2s;
+  width:min(100%,320px);
+  min-height:56px;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(184,255,0,0.28);}
+.l-disclaimer{
+  margin-top:36px;font-size:11px;color:var(--muted2);
+  max-width:380px;line-height:1.7;
+}
+.l-characters{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  margin:32px 0;max-width:460px;
+}
+.char-chip{
+  font-family:'Fira Code',monospace;font-size:10px;
+  padding:4px 10px;border:1px solid var(--border);
+  color:var(--muted);letter-spacing:.03em;
+}
+.char-chip.hidden{border-color:var(--gold);color:var(--gold);opacity:.7;}
+
+/* ─────────────────────────
+   QUIZ
+───────────────────────── */
+#quiz{display:none;min-height:100vh;padding:20px 0 100px;}
+.progress-bar{
+  position:fixed;top:0;left:0;right:0;height:3px;
+  background:var(--border);z-index:100;
+}
+.progress-fill{
+  height:100%;background:var(--accent);
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+}
+.quiz-topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:28px 0 36px;
+}
+.quiz-logo{font-family:'Fira Code',monospace;font-size:12px;color:var(--accent);}
+.quiz-counter{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.q-card{
+  background:var(--card);border:1px solid var(--border);
+  padding:40px;margin-bottom:16px;
+  animation:fadeUp .35s ease both;
+}
+.q-num{
+  font-family:'Fira Code',monospace;font-size:10px;
+  color:var(--accent);letter-spacing:.14em;margin-bottom:14px;opacity:.8;
+}
+.q-text{
+  font-family:'Noto Serif SC',serif;font-size:1.25rem;
+  line-height:1.65;font-weight:700;margin-bottom:30px;
+}
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{
+  background:transparent;border:1px solid var(--border);
+  color:var(--text);padding:15px 18px;
+  text-align:left;cursor:pointer;
+  font-family:'Noto Sans SC',sans-serif;font-size:.9rem;
+  line-height:1.55;transition:transform .15s, border-color .15s, background-color .15s;
+  display:flex;align-items:flex-start;gap:12px;
+  width:100%;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.opt-letter{
+  font-family:'Fira Code',monospace;font-size:10px;
+  color:var(--accent);flex-shrink:0;margin-top:3px;opacity:.6;
+}
+.opt:hover{
+  border-color:var(--border-hover);
+  background:rgba(184,255,0,0.04);
+  transform:translateX(3px);
+}
+.opt.selected{
+  border-color:var(--accent);
+  background:var(--accent-dim);
+}
+.btn-next{
+  background:var(--accent);color:#06060e;border:none;
+  padding:15px 32px;font-family:'Syne',sans-serif;
+  font-size:1rem;font-weight:800;cursor:pointer;
+  letter-spacing:.06em;transition:transform .2s, opacity .2s;width:100%;
+  animation:fadeUp .2s ease both;margin-top:4px;
+}
+.btn-next:hover{opacity:.9;transform:translateY(-1px);}
+
+/* ─────────────────────────
+   RESULT
+───────────────────────── */
+#result{display:none;min-height:100vh;padding:20px 0 80px;}
+.r-header{text-align:center;padding:36px 0 28px;}
+.r-eyebrow{
+  font-family:'Fira Code',monospace;font-size:10px;
+  color:var(--accent);letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px;
+}
+.r-headline{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(1.4rem,4vw,1.9rem);color:var(--muted);
+}
+
+@keyframes fadeUp2{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.r-card{
+  background:var(--card);border:1px solid var(--border);
+  overflow:hidden;animation:fadeUp2 .5s ease both;
+}
+.r-card.hidden{border-color:var(--gold);}
+
+.r-photo-wrap{
+  position:relative;height:340px;overflow:hidden;
+  background:var(--surface);
+}
+.r-photo{
+  width:100%;height:100%;object-fit:cover;
+  object-position:center 15%;filter:grayscale(15%) contrast(1.05);
+  transition:opacity .4s;
+  background:var(--surface);
+}
+.r-photo-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom, transparent 35%, var(--card) 100%);
+}
+.r-fallback{
+  width:100%;height:100%;display:none;
+  align-items:center;justify-content:center;
+  font-size:100px;
+  background:radial-gradient(circle at center, var(--surface) 0%, var(--bg) 100%);
+}
+
+.r-body{padding:32px 36px 36px;}
+.hidden-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--gold);color:#06060e;
+  font-family:'Fira Code',monospace;font-size:10px;font-weight:500;
+  padding:5px 12px;margin-bottom:16px;letter-spacing:.06em;
+}
+.r-name{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:2.1rem;letter-spacing:-.01em;margin-bottom:5px;
+}
+.r-card.hidden .r-name{color:var(--gold);}
+.r-role{
+  font-family:'Fira Code',monospace;font-size:11px;
+  color:var(--accent);margin-bottom:28px;line-height:1.6;
+}
+
+.r-section-label{
+  font-family:'Fira Code',monospace;font-size:9px;
+  color:var(--muted);letter-spacing:.18em;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.r-trait{
+  font-family:'Noto Serif SC',serif;font-size:1.05rem;
+  font-weight:700;color:var(--text);margin-bottom:22px;
+  padding-left:14px;border-left:3px solid var(--accent);line-height:1.6;
+}
+.r-card.hidden .r-trait{border-left-color:var(--gold);}
+.r-quote{
+  font-family:'Fira Code',monospace;font-size:.82rem;
+  color:var(--muted);padding:14px 16px;
+  background:rgba(255,255,255,0.025);
+  border-left:2px solid var(--muted2);
+  margin-bottom:22px;line-height:1.7;
+}
+.r-desc{
+  font-size:.95rem;line-height:1.85;color:var(--text);
+  margin-bottom:24px;font-weight:300;
+}
+.r-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:28px;}
+.r-tag{
+  font-family:'Fira Code',monospace;font-size:10px;
+  padding:5px 11px;border:1px solid var(--border);
+  color:var(--muted);letter-spacing:.04em;
+}
+.r-card.hidden .r-tag{border-color:rgba(240,192,64,.25);color:var(--gold);opacity:.8;}
+.r-nearby{display:grid;gap:10px;margin-bottom:28px;}
+.r-near{
+  padding:14px 16px;border:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+  background:rgba(255,255,255,0.01);
+}
+.r-near-rank{
+  font-family:'Fira Code',monospace;font-size:11px;color:var(--accent);opacity:.9;min-width:42px;
+}
+.r-near-copy{flex:1;}
+.r-near-name{font-size:.95rem;font-weight:600;line-height:1.4;margin-bottom:3px;}
+.r-near-title{font-size:.78rem;color:var(--muted);line-height:1.5;}
+.r-near-score{
+  font-family:'Fira Code',monospace;font-size:11px;color:var(--muted);
+}
+.r-rels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
+.r-rel{padding:14px 16px;border:1px solid var(--border);}
+.r-rel-label{
+  font-family:'Fira Code',monospace;font-size:9px;
+  color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;
+}
+.r-rel-name{font-size:.9rem;font-weight:500;line-height:1.4;}
+
+.btn-share{
+  background:var(--accent);color:#06060e;border:none;
+  padding:14px 28px;font-family:'Syne',sans-serif;
+  font-size:.95rem;font-weight:800;cursor:pointer;
+  transition:transform .2s, opacity .2s;width:100%;letter-spacing:.05em;
+  margin-bottom:10px;
+}
+.btn-share:hover{opacity:.9;transform:translateY(-1px);}
+.btn-retry{
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);padding:13px 28px;
+  font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:border-color .2s, color .2s;width:100%;letter-spacing:.05em;
+}
+.btn-retry:hover{border-color:var(--border-hover);color:var(--text);}
+
+.toast{
+  position:fixed;bottom:36px;left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--accent);color:#06060e;
+  padding:11px 22px;font-family:'Fira Code',monospace;
+  font-size:12px;font-weight:500;opacity:0;
+  transition:transform .3s, opacity .3s;pointer-events:none;z-index:9999;
+  width:min(calc(100vw - 28px), 420px);
+  white-space:normal;
+  text-align:center;
+  line-height:1.5;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.btn-primary:focus-visible,
+.opt:focus-visible,
+.btn-next:focus-visible,
+.btn-share:focus-visible,
+.btn-retry:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
+
+@media(max-width:580px){
+  .wrap{padding:0 18px;}
+  #landing{padding:56px 18px;}
+  .l-eyebrow{margin-bottom:20px;}
+  .q-card{padding:28px 20px;}
+  .q-text{font-size:1.1rem;line-height:1.7;}
+  .opt{padding:14px 15px;font-size:.92rem;}
+  .r-body{padding:24px 20px;}
+  .r-photo-wrap{height:300px;}
+  .r-rels{grid-template-columns:1fr;}
+  .l-title{font-size:2.6rem;}
+  .l-sub{font-size:1rem;}
+  .l-meta{line-height:1.8;}
+  .toast{bottom:20px;font-size:11px;padding:10px 16px;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *,*::before,*::after{
+    animation:none !important;
+    transition:none !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<!-- ════════════════════════════════
+     LANDING
+════════════════════════════════ -->
+<section id="landing">
+  <div class="wrap" style="max-width:580px;">
+    <div class="l-eyebrow">AI人格测试 · v1.1</div>
+    <h1 class="l-title">测测你是AI圈的<br><span class="hi">哪位大佬？</span></h1>
+    <p class="l-sub">15道题，测出你在全球AI圈的人格坐标。<br>认真里带点损，适合截图发给同行。</p>
+    <p class="l-meta"><span>15</span> 题 &nbsp;·&nbsp; 约 <span>4</span> 分钟 &nbsp;·&nbsp; <span>20</span> 种结果 &nbsp;·&nbsp; <span>1</span> 个隐藏人物</p>
+    <div class="l-characters">
+      <span class="char-chip">Sam Altman</span>
+      <span class="char-chip">Ilya Sutskever</span>
+      <span class="char-chip">Yann LeCun</span>
+      <span class="char-chip">Elon Musk</span>
+      <span class="char-chip">李飞飞</span>
+      <span class="char-chip">Demis Hassabis</span>
+      <span class="char-chip">Dario Amodei</span>
+      <span class="char-chip">Jensen Huang</span>
+      <span class="char-chip">Andrej Karpathy</span>
+      <span class="char-chip">Geoffrey Hinton</span>
+      <span class="char-chip">Yoshua Bengio</span>
+      <span class="char-chip">Sundar Pichai</span>
+      <span class="char-chip">Mark Zuckerberg</span>
+      <span class="char-chip">Jeff Dean</span>
+      <span class="char-chip">Mustafa Suleyman</span>
+      <span class="char-chip">Greg Brockman</span>
+      <span class="char-chip">Emad Mostaque</span>
+      <span class="char-chip">吴恩达</span>
+      <span class="char-chip">Reid Hoffman</span>
+      <span class="char-chip hidden">🔒 ???</span>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">开始测试 →</button>
+    <p class="l-disclaimer">本测试纯属娱乐，结果请勿对号入座。<br>所有人物特征描述来自公开信息，含夸张幽默处理。</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     QUIZ
+════════════════════════════════ -->
+<section id="quiz">
+  <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+  <div class="wrap">
+    <div class="quiz-topbar">
+      <span class="quiz-logo">AI人格测试</span>
+      <span class="quiz-counter" id="qctr">01 / 15</span>
+    </div>
+    <div id="qbox"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     RESULT
+════════════════════════════════ -->
+<section id="result">
+  <div class="wrap">
+    <div class="r-header">
+      <div class="r-eyebrow">// 测试结果</div>
+      <div class="r-headline">你最像——</div>
+    </div>
+    <div class="r-card" id="rcard">
+      <div class="r-photo-wrap">
+        <img class="r-photo" id="rphoto" src="" alt="" referrerpolicy="no-referrer" decoding="async" width="640" height="800"
+             onload="this.style.opacity=1"
+             onerror="this.style.display='none';document.getElementById('rfallback').style.display='flex'">
+        <div class="r-photo-overlay"></div>
+        <div class="r-fallback" id="rfallback"></div>
+      </div>
+      <div class="r-body">
+        <div id="rbadge"></div>
+        <div class="r-name" id="rname"></div>
+        <div class="r-role" id="rrole"></div>
+        <div class="r-section-label">🎭 真实写照</div>
+        <div class="r-trait" id="rtrait"></div>
+        <div class="r-section-label">💬 口头禅</div>
+        <div class="r-quote" id="rquote"></div>
+        <div class="r-section-label">📖 完整人格描述</div>
+        <div class="r-desc" id="rdesc"></div>
+        <div class="r-tags" id="rtags"></div>
+        <div class="r-section-label">🥈 最接近的另外两位</div>
+        <div class="r-nearby" id="rnearby"></div>
+        <div class="r-rels" id="rrels"></div>
+        <button class="btn-share" onclick="copyResult()">📋 复制结果文案去分享</button>
+        <button class="btn-retry" onclick="retryQuiz()">🔄 再测一次（可能会变哦）</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite">已复制，发给朋友试试</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// CHARACTER DATA  (index 0–18 + index 19 = hidden Turing)
+// ═══════════════════════════════════════════════════
+const CHARS = [
+  // 0
+  {
+    name:'Sam Altman',
+    title:'OpenAI CEO · AGI布道者 · YC前掌门',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Sam_Altman_CogX_2023_%28cropped%29.jpg/480px-Sam_Altman_CogX_2023_%28cropped%29.jpg',
+    emoji:'🎯',
+    trait:'乔布斯转世的YC老炮，眼里燃着AGI的火，日历是天下最贵的资源',
+    quote:'"我们可能已经比任何人意识到的都更接近AGI了"',
+    desc:'你是那种能把"改变世界"说得像在说天气预报的人。开口是使命，闭口是融资，但偏偏让所有人都信了。你被自己的公司开除又被请回来，这种事只有你能当励志故事讲。你的日历排到三个月后，但你永远有时间再约一场"改变命运的对话"。你相信AGI即将到来，相信这是人类历史上最重要的时刻，而恰好你正站在中心——这不是巧合，这是设计。',
+    tags:['使命感爆棚','YC精神领袖','AGI布道者','融资天才'],
+    soulmate:'Greg Brockman',
+    nemesis:'Elon Musk',
+  },
+  // 1
+  {
+    name:'Ilya Sutskever',
+    title:'SSI创始人 · OpenAI前首席科学家 · 深度学习圣人',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Ilya_Sutskever_-_ONS_2023_%28cropped%29.jpg/480px-Ilya_Sutskever_-_ONS_2023_%28cropped%29.jpg',
+    emoji:'🧘',
+    trait:'神秘的深度学习圣人，思考维度超出常人，沉默比千言万语更有力量',
+    quote:'"我无法透露更多细节"',
+    desc:'你是那种让同事觉得"他到底在想什么"的人。从AlexNet到GPT，你的每一步都比外界的解读早了三年。离开OpenAI之后你只说了一句话，但全球AI圈讨论了六个月。你正在追求"安全超级智能"，这个词的重量让所有人都噤声了。你的沉默，比别人一千条推文更有力量。你相信意识和智能之间有一条神圣的线，而你在慢慢靠近它。',
+    tags:['深度学习圣人','神秘系研究者','意识探索者','SSI创始人'],
+    soulmate:'Geoffrey Hinton',
+    nemesis:'Yann LeCun',
+  },
+  // 2
+  {
+    name:'Yann LeCun',
+    title:'Meta首席AI科学家 · CNN之父 · 图灵奖得主',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Yann_LeCun_-_2019_%28cropped%29.jpg/480px-Yann_LeCun_-_2019_%28cropped%29.jpg',
+    emoji:'⚔️',
+    trait:'永远在线的学术斗士，和所有人都吵过架，但每次都是真诚地相信自己对了',
+    quote:'"LLM根本不会推理，这只是个花里胡哨的自动补全"',
+    desc:'你是卷积神经网络的父亲，也是Twitter最危险的教授。你深信所有人都在错误的道路上走向错误的AGI，而你有责任、有义务、有冲动告诉他们。你和Musk吵、和Hinton辩、和所有LLM支持者论战，但你从不因为输了赢了而停止——因为你享受这个过程本身。你不是杠精，你是一个真正在乎真相的人，只不过你的表达方式让所有人都坐不住。',
+    tags:['学术斗士','CNN之父','反LLM先锋','永远在线'],
+    soulmate:'Yoshua Bengio',
+    nemesis:'Ilya Sutskever',
+  },
+  // 3
+  {
+    name:'Elon Musk',
+    title:'xAI创始人 · Tesla · SpaceX · X(Twitter)老板',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Elon_Musk_Colorado_2022_%28cropped2%29.jpg/480px-Elon_Musk_Colorado_2022_%28cropped2%29.jpg',
+    emoji:'🚀',
+    trait:'带着钢铁侠梦想的混沌中立使者，自相矛盾本身就是他的人格标签',
+    quote:'"我要做的事，比你想象的荒谬十倍"',
+    desc:'你是那种把"我要改变世界"说出来之后，真的去做了，然后还附赠一堆没人要求的副作用的人。你创办了OpenAI，又状告OpenAI。你喊着开源，又用算法掌控舆论。你在X上警告AI危险，同时推进自己的AI项目xAI。你的存在本身就是矛盾的艺术品。大家既无法无视你，又无法完全信任你，但这恰恰是你最擅长的位置。',
+    tags:['混沌中立','连环创业狂人','推特搅局者','AGI预言者'],
+    soulmate:'Greg Brockman（早期）',
+    nemesis:'Sam Altman',
+  },
+  // 4
+  {
+    name:'李飞飞（Fei-Fei Li）',
+    title:'斯坦福教授 · ImageNet缔造者 · AI4Human倡导者',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Feifei_li.jpg/480px-Feifei_li.jpg',
+    emoji:'🌟',
+    trait:'用ImageNet点燃了深度学习革命，然后用后半生担心这把火烧错了地方',
+    quote:'"AI必须以人为本，技术不能脱离人类价值观"',
+    desc:'你用ImageNet点燃了深度学习革命，然后花了接下来十年担心这把火会烧错地方。你在斯坦福教书、在Google Cloud工作、在白宫作证，每一个场合你都在说同一件事：AI要为人类服务，不是反过来。你写了一本回忆录，记录了一个移民女孩如何用科学改变世界。你的温柔和你的执着一样不可撼动，这让你成为了这个行业最不可或缺的声音之一。',
+    tags:['ImageNet缔造者','AI伦理守护者','学界良心','教育力量'],
+    soulmate:'吴恩达（Andrew Ng）',
+    nemesis:'技术至上主义',
+  },
+  // 5
+  {
+    name:'Demis Hassabis',
+    title:'Google DeepMind CEO · 诺贝尔化学奖得主',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Demis_Hassabis_Royal_Society.jpg/480px-Demis_Hassabis_Royal_Society.jpg',
+    emoji:'♟️',
+    trait:'棋手、神经科学家、游戏设计师、AGI追求者——他只是一个人',
+    quote:'"AGI将是人类历史上最重要的发明，我们必须安全地实现它"',
+    desc:'你是少数几个真正同时理解"科学是什么"和"商业是什么"的人。你用AlphaGo打败了人类，用AlphaFold解开了蛋白质折叠这个生物学最大谜团，然后获得了诺贝尔奖，然后继续往前走。你打国际象棋能到世界级，你设计的游戏获过奖，你对意识的兴趣比对benchmark更真实。你是那种让其他AI大佬都觉得"原来还可以这样"的存在。',
+    tags:['全维度天才','DeepMind灵魂','棋王+科学家','诺贝尔奖得主'],
+    soulmate:'Geoffrey Hinton',
+    nemesis:'Yann LeCun',
+  },
+  // 6
+  {
+    name:'Dario Amodei',
+    title:'Anthropic CEO · Constitutional AI创造者',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Dario_Amodei_2024_%28cropped%29.jpg/480px-Dario_Amodei_2024_%28cropped%29.jpg',
+    emoji:'🛡️',
+    trait:'AI安全的自我质疑者，既深信AI是未来，又夜夜担心这件事做错了',
+    quote:'"我们在构建可能是人类历史上最危险的技术，这就是为什么我们必须走在最前面"',
+    desc:'你是那种会认真给自己的AI写宪法的人。你离开OpenAI不是因为待遇，是因为你相信有一种更负责任的方式——然后你去证明这件事。你在国会作证时比政客还认真，你的安全报告比大多数学术论文更严谨。你内心深处有一个声音在问："我们做的事是对的吗？"而你选择用行动来回答，而不是逃避这个问题。',
+    tags:['AI安全践行者','Anthropic创始人','自我质疑的乐观主义者','Constitutional AI之父'],
+    soulmate:'Yoshua Bengio',
+    nemesis:'短期商业压力',
+  },
+  // 7
+  {
+    name:'Jensen Huang（黄仁勋）',
+    title:'NVIDIA CEO · 皮衣教主 · 算力帝国创始人',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Jensen_Huang_-_2024_%28cropped%29.jpg/480px-Jensen_Huang_-_2024_%28cropped%29.jpg',
+    emoji:'⚡',
+    trait:'皮衣教父，把GPU卖成了信仰，把芯片讲成了史诗',
+    quote:'"我们的GPU供不应求，但我们在全力生产"',
+    desc:'你是那种把产品发布会开成演唱会的人。你的皮衣是你的战袍，Blackwell是你的诗篇，竞争对手的参数对比表是你的武器。你在1993年只有30个员工时就笃定GPU会改变世界，三十年后你是对的，而且比任何人预期的都要正确。你不是AI从业者，你是AI时代的基础设施，而且你比所有人都更享受这个身份。',
+    tags:['皮衣教主','GPU信仰者','NVIDIA帝国','算力诗人'],
+    soulmate:'Sam Altman',
+    nemesis:'AMD',
+  },
+  // 8
+  {
+    name:'Andrej Karpathy',
+    title:'独立研究者 · 特斯拉AI前负责人 · 神经网络传教士',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Andrej_Karpathy_-_2023_%28cropped%29.jpg/480px-Andrej_Karpathy_-_2023_%28cropped%29.jpg',
+    emoji:'💻',
+    trait:'最懂工程的学者，最懂学术的工程师，AI界的费曼',
+    quote:'"Let\'s build this from scratch and understand every single line"',
+    desc:'你是那种离开了特斯拉，又去OpenAI，然后出来做教育，因为你觉得大家对神经网络的理解还不够深的人。你的YouTube课程让全球几十万人真正搞懂了反向传播。你不写营销文案，你写代码注释，而且注释写得比大多数论文更清楚。你是那种自己把一个神经网络从零写出来还要解释每一行为什么这么写的人，因为你真的认为理解比使用更重要。',
+    tags:['工程学者','最强教程博主','神经网络传教士','特斯拉AI前负责人'],
+    soulmate:'Ilya Sutskever',
+    nemesis:'过度包装的AI炒作',
+  },
+  // 9
+  {
+    name:'Geoffrey Hinton',
+    title:'"AI教父" · 图灵奖+诺贝尔物理学奖得主',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Geoffrey_Hinton_%28cropped%29.jpg/480px-Geoffrey_Hinton_%28cropped%29.jpg',
+    emoji:'👴',
+    trait:'"AI教父"，用后半生为自己的创造而忏悔，这是一种更沉重的勇气',
+    quote:'"我觉得我们正在面临真实的存在性风险，我为此感到遗憾"',
+    desc:'你帮助创造了深度学习，然后辞职，专门去警告世界它的危险。这不是反悔，是一种更沉重的责任感。你获得了图灵奖和诺贝尔物理学奖，但你更关心的是有没有人真的在认真对待风险。你的白发和忧虑都是真实的，你对后辈的期望和对未来的担忧同样真实。你不是悲观主义者，你是一个知道太多、因此无法轻松的人。',
+    tags:['深度学习之父','AI风险警告者','图灵奖+诺贝尔奖','谨慎的先知'],
+    soulmate:'Yoshua Bengio',
+    nemesis:'Yann LeCun（在AI风险判断上）',
+  },
+  // 10
+  {
+    name:'Yoshua Bengio',
+    title:'图灵奖得主 · Mila创始人 · AI治理倡导者',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Yoshua_Bengio_-_2023_%28cropped%29.jpg/480px-Yoshua_Bengio_-_2023_%28cropped%29.jpg',
+    emoji:'🕊️',
+    trait:'最温柔的AI安全倡导者，用学者的方式在进行最紧迫的战斗',
+    quote:'"我们必须在AI治理上建立国际共识，否则后果难以预料"',
+    desc:'你是图灵奖三巨头之一，但你花最多时间的不是发论文，是推动AI监管。你写公开信，你参加联合国会议，你在各国政府的听证会上用平静的语气说出非常不平静的警告。你相信科学应该为全人类服务，而不仅仅是股东。你是那种让人觉得"如果所有AI研究者都像他就好了"的存在，尽管大家都知道这不现实。',
+    tags:['深度学习三巨头','AI治理倡导者','学者良心','国际主义者'],
+    soulmate:'Geoffrey Hinton',
+    nemesis:'短视的商业利益',
+  },
+  // 11
+  {
+    name:'Sundar Pichai',
+    title:'Google & Alphabet CEO · AI时代的掌舵者',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Sundar_Pichai_2022_%28cropped%29.jpg/480px-Sundar_Pichai_2022_%28cropped%29.jpg',
+    emoji:'🎖️',
+    trait:'最稳的那个，在AI大战风暴中心保持微笑，这是一种超能力',
+    quote:'"我们对AI的未来充满期待，同时我们也非常重视负责任的发展"',
+    desc:'你是在最难的位置上做最平衡的事的人。谷歌同时拥有最多的AI研究者和最大的商业压力，而你要在两者之间走钢丝。你不会说出任何可能引发股价波动的话，你不会对竞争对手发表任何不适当的评论，你会用一个温暖的微笑和一个精心措辞的回答化解所有尖锐的问题。这是一种极少数人能掌握的超能力。',
+    tags:['谷歌掌舵者','危机公关大师','稳如老狗','最贵的微笑'],
+    soulmate:'Mustafa Suleyman',
+    nemesis:'内部压力',
+  },
+  // 12
+  {
+    name:'Mark Zuckerberg',
+    title:'Meta CEO · Llama开源缔造者 · 人设升级专家',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg/480px-Mark_Zuckerberg_F8_2019_Keynote_%2832830578717%29_%28cropped%29.jpg',
+    emoji:'🤖',
+    trait:'从"机器人"进化到"开源斗士"，每一次人设升级都令人叹为观止',
+    quote:'"Meta AI将免费向所有人开放，这是我们对社会的承诺"',
+    desc:'你的人设经历了三次重大版本更新，而你每次都全情投入。你曾经是硅谷最像机器人的CEO，然后你去学武术、剃头发、穿时尚单品，突然变酷了。你把Llama开源，把自己变成了开源社区的英雄——尽管大家都知道这背后有战略考量。你不是没有感情，你只是一直在升级自己的固件。版本4.0已经比版本1.0好太多了。',
+    tags:['Meta掌门人','Llama开源缔造者','人设升级专家','长期主义者'],
+    soulmate:'Sundar Pichai',
+    nemesis:'监管机构',
+  },
+  // 13
+  {
+    name:'Jeff Dean',
+    title:'Google DeepMind首席科学家 · 传说中的程序员',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Jeff_Dean_%28computer_scientist%29.jpg/480px-Jeff_Dean_%28computer_scientist%29.jpg',
+    emoji:'🔧',
+    trait:'低调的神，每个深度学习工程师的精神图腾，传说中的10x程序员',
+    quote:'"好的架构和好的数据，会自己说话"',
+    desc:'你写过MapReduce，写过TensorFlow，带领Google Brain走向了Transformer时代。你是那种在黑板上画架构图之后，直接就能实现的人。AI界流传着无数"Jeff Dean传说"，比如"他的程序第一次运行就通过了——因为编译器不敢报错"。你是真正的传说，而且你本人并不知道自己已经成了传说。你不需要社交媒体，代码本身就是你的声音。',
+    tags:['Google AI传说','工程神话','TensorFlow之父','最低调的大牛'],
+    soulmate:'Andrej Karpathy',
+    nemesis:'过度包装的PR',
+  },
+  // 14
+  {
+    name:'Mustafa Suleyman',
+    title:'Microsoft AI CEO · DeepMind联合创始人',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Mustafa_Suleyman_-_2023_%28cropped%29.jpg/480px-Mustafa_Suleyman_-_2023_%28cropped%29.jpg',
+    emoji:'🌐',
+    trait:'从DeepMind到Inflection再到微软，总在寻找更大的战场，总能找到',
+    quote:'"AI不只是技术，它是一场深刻的社会变革，我们必须主导这场变革"',
+    desc:'你和Demis一起创办了DeepMind，然后离开，去创办了Inflection，然后把整个团队带进了微软。每一次转型你都说是为了更大的使命，而有趣的是，你每次都真的找到了更大的平台。你对AI政策和社会影响的关注是真实的，你的商业嗅觉也是真实的，这两件事在你身上并不矛盾——它们相互成全。',
+    tags:['连环创业者','AI政策鹰派','DeepMind联创','微软AI掌门'],
+    soulmate:'Demis Hassabis',
+    nemesis:'稳定',
+  },
+  // 15
+  {
+    name:'Greg Brockman',
+    title:'OpenAI联合创始人 · 永远在写代码的那个人',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Greg_Brockman_TechCrunch_2024_%28cropped%29.jpg/480px-Greg_Brockman_TechCrunch_2024_%28cropped%29.jpg',
+    emoji:'⌨️',
+    trait:'OpenAI最忠诚的技术修行者，永远比所有人多写一行代码',
+    quote:'"我们要做的不只是一家公司，是人类历史上最重要的项目"',
+    desc:'你是那种把"黑客精神"和"使命感"完美融合在一起的人。在Sam被开除的那个周末，你选择辞职声援他。你返回OpenAI时没有庆功，你直接去写代码了。你相信AGI会来，你相信你们在做正确的事，你相信认真写代码比说任何话都更有力量。所有人都知道OpenAI有Sam，但只有真正懂技术的人才知道Greg的存在意味着什么。',
+    tags:['OpenAI联创','永远在写代码','使命感具象化','忠义之士'],
+    soulmate:'Sam Altman',
+    nemesis:'中途退出者',
+  },
+  // 16
+  {
+    name:'Emad Mostaque',
+    title:'Stability AI创始人 · 开源AI布道者',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Emad_Mostaque_-_2023_%28cropped%29.jpg/480px-Emad_Mostaque_-_2023_%28cropped%29.jpg',
+    emoji:'🎨',
+    trait:'把Stable Diffusion带到世界的争议性理想主义者，开源的浪漫骑士',
+    quote:'"AI应该属于所有人，不应该被少数科技公司垄断"',
+    desc:'你用Stable Diffusion证明了开源可以颠覆闭源巨头，然后你又辞职了，说公司走向了错误的方向。你的每一句话都充满理想主义，你的每一步都充满争议。你相信去中心化的AI是未来，即使大多数投资人更喜欢中心化的商业模式。你是AI界的无政府主义浪漫主义者，这个世界需要你这样的人，尽管不总是知道拿你怎么办。',
+    tags:['Stability AI创始人','开源AI布道者','争议性理想主义者','去中心化信徒'],
+    soulmate:'Yann LeCun',
+    nemesis:'商业现实',
+  },
+  // 17
+  {
+    name:'吴恩达（Andrew Ng）',
+    title:'Landing AI创始人 · Coursera联创 · AI民主化先驱',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Andrew_Ng_at_AI_For_Good_2017.jpg/480px-Andrew_Ng_at_AI_For_Good_2017.jpg',
+    emoji:'📚',
+    trait:'AI民主化的传教士，用Coursera教会了全球几百万人，并且还没有停下来',
+    quote:'"AI是新的电力，而我要让所有人都能用上这盏灯"',
+    desc:'你把"AI是新的电力"这个比喻说了十年，而且越来越对。你在斯坦福教过机器学习，你在Google建过Brain，你创办了Coursera，你又去做Landing AI推动AI在企业的落地。你是那种无论去哪里都要顺便办一个课程的人，因为你真的相信教育能改变命运。你的学生遍布全球，而你的课件永远是最清晰的那份。',
+    tags:['AI民主化先驱','Coursera联创','最会教AI的人','Google Brain联创'],
+    soulmate:'李飞飞',
+    nemesis:'信息茧房',
+  },
+  // 18
+  {
+    name:'Reid Hoffman',
+    title:'LinkedIn创始人 · OpenAI早期投资人 · 硅谷超级连接者',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Reid_Hoffman_%28cropped%29.jpg/480px-Reid_Hoffman_%28cropped%29.jpg',
+    emoji:'🔗',
+    trait:'硅谷最会连接人的人，也是AI最早最准的判断者之一',
+    quote:'"成功不是一个人的事，是网络的事"',
+    desc:'你创办了LinkedIn，你是OpenAI的早期投资人，你投资并联合创办了Inflection。你是那种知道"下一件重要的事是什么"并且立刻去找到能做这件事的人的人。你的超能力不是技术，是网络——你认识所有人，你知道如何把他们连接起来，让事情发生。你看任何新技术的第一个问题都是："这会怎样改变人与人之间的连接？"',
+    tags:['LinkedIn创始人','AI早期投资人','硅谷超级连接者','网络效应信徒'],
+    soulmate:'Sam Altman',
+    nemesis:'孤立主义',
+  },
+  // 19 — HIDDEN
+  {
+    name:'Alan Turing',
+    title:'计算机科学之父 · 密码学家 · 图灵测试创造者 · 【隐藏人物】',
+    photo:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Alan_Turing_Aged_16.jpg/480px-Alan_Turing_Aged_16.jpg',
+    emoji:'🔐',
+    isHidden:true,
+    trait:'祖师爷·图灵——你不属于任何流派，你创造了这个领域本身',
+    quote:'"机器能思考吗？"',
+    desc:'恭喜你解锁了隐藏人物！你的答案游走于所有类别之间，无法被简单归类——就像图灵本人一样。图灵是密码学家、数学家、生物学家、计算机科学的奠基人，他提出了"机器能思考吗"这个问题，然后在没有人能完全理解他的时代，用一生来探索答案。你既不是纯粹的工程师，也不是纯粹的学者，你超越了所有类别。这是AI人格测试能给出的最高致敬。',
+    tags:['计算机科学之父','图灵测试创造者','跨越时代的先知','🔒 隐藏人物'],
+    soulmate:'无——你是所有人的起点',
+    nemesis:'被低估的时代',
+  },
+];
+
+const PORTRAIT_PALETTES = [
+  ['#0f172a','#111827','#38bdf8','#f8fafc'],
+  ['#1f2937','#111827','#c084fc','#f9fafb'],
+  ['#111827','#0f172a','#f97316','#f8fafc'],
+  ['#111827','#030712','#fb7185','#f8fafc'],
+  ['#1f2937','#111827','#22c55e','#f8fafc'],
+  ['#1e1b4b','#111827','#f59e0b','#f8fafc'],
+  ['#111827','#0f172a','#34d399','#f8fafc'],
+  ['#172554','#0f172a','#facc15','#f8fafc'],
+  ['#0f172a','#111827','#60a5fa','#f8fafc'],
+  ['#1f2937','#111827','#e5e7eb','#f8fafc'],
+];
+
+function escapeSvgText(value){
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function buildPortraitDataUri(char, idx){
+  const [bgA, bgB, accent, text] = PORTRAIT_PALETTES[idx % PORTRAIT_PALETTES.length];
+  const titleLines = char.title.split(' · ').slice(0, 3);
+  const tagLine = char.tags.slice(0, 3).join(' · ');
+  const eyebrow = char.isHidden ? 'HIDDEN RESULT' : 'AI PERSONALITY TEST';
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-label="${escapeSvgText(char.name)}">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${bgA}"/>
+          <stop offset="100%" stop-color="${bgB}"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="50%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="${accent}" stop-opacity="0.34"/>
+          <stop offset="100%" stop-color="${accent}" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="640" height="800" rx="0" fill="url(#bg)"/>
+      <rect width="640" height="800" fill="url(#glow)"/>
+      <g opacity="0.08" stroke="${accent}">
+        <path d="M0 120H640"/>
+        <path d="M0 220H640"/>
+        <path d="M0 320H640"/>
+        <path d="M0 420H640"/>
+        <path d="M0 520H640"/>
+        <path d="M0 620H640"/>
+        <path d="M120 0V800"/>
+        <path d="M220 0V800"/>
+        <path d="M320 0V800"/>
+        <path d="M420 0V800"/>
+        <path d="M520 0V800"/>
+      </g>
+      <rect x="28" y="28" width="584" height="744" rx="24" fill="none" stroke="${char.isHidden ? '#f0c040' : accent}" stroke-width="2"/>
+      <text x="50" y="88" fill="${char.isHidden ? '#f0c040' : accent}" font-size="24" font-family="'Fira Code', monospace" letter-spacing="2">${escapeSvgText(eyebrow)}</text>
+      <text x="50" y="290" fill="${accent}" font-size="160">${escapeSvgText(char.emoji)}</text>
+      <text x="50" y="408" fill="${text}" font-size="54" font-weight="800" font-family="'Syne', 'Noto Sans SC', sans-serif">${escapeSvgText(char.name)}</text>
+      ${titleLines.map((line, lineIdx) => `
+      <text x="50" y="${455 + lineIdx * 34}" fill="${accent}" font-size="22" font-family="'Fira Code', monospace">${escapeSvgText(line)}</text>`).join('')}
+      <text x="50" y="602" fill="${text}" font-size="24" font-family="'Noto Serif SC', serif">${escapeSvgText(char.trait)}</text>
+      <rect x="50" y="652" width="540" height="1" fill="${accent}" opacity="0.25"/>
+      <text x="50" y="700" fill="${text}" font-size="20" font-family="'Fira Code', monospace">${escapeSvgText(tagLine)}</text>
+    </svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+CHARS.forEach((char, idx) => {
+  char.sourcePhoto = char.photo;
+  char.photo = buildPortraitDataUri(char, idx);
+});
+
+// ═══════════════════════════════════════════════════
+// QUESTIONS & SCORING
+// Scores: [[char_index, points], ...]
+// 0=Altman 1=Ilya 2=LeCun 3=Musk 4=Feifei 5=Demis
+// 6=Dario 7=Jensen 8=Karpathy 9=Hinton 10=Bengio
+// 11=Sundar 12=Zuck 13=JeffDean 14=Mustafa 15=Greg
+// 16=Emad 17=AndrewNg 18=Reid 19=Turing(hidden)
+// ═══════════════════════════════════════════════════
+const Qs = [
+  {
+    q:'如果只能用一句话描述你做AI的核心动机，你会说——',
+    opts:[
+      {t:'「实现AGI是我们这代人的历史使命，必须全力以赴。」',s:[[0,3],[15,1],[18,1]]},
+      {t:'「我只是想搞清楚智能的本质，其他都是附产品。」',s:[[1,3],[5,2],[9,2],[10,1]]},
+      {t:'「所有人都在走错误的道路，我来帮大家纠正。」',s:[[2,3],[3,1]]},
+      {t:'「让AI惠及更多人，缩小数字鸿沟，这才是意义所在。」',s:[[4,3],[17,2],[10,1]]},
+      {t:'「先build出来，让市场和用户告诉我什么是有意义的。」',s:[[16,2],[8,1],[18,1],[3,1]]},
+    ]
+  },
+  {
+    q:'周五下午，你最可能在干什么？',
+    opts:[
+      {t:'同时开十个对话，日程本排到三个月后，但今天还约了三个创始人。',s:[[0,3],[18,2],[11,1]]},
+      {t:'深度专注读论文，谢绝所有会议，手机静音。',s:[[1,3],[8,2],[9,2],[10,1]]},
+      {t:'在X上怼人，同时推进五个不同公司的业务。',s:[[3,3],[2,1]]},
+      {t:'写代码，盯着GPU利用率，这就是我的修行。',s:[[8,2],[13,3],[7,1],[15,2]]},
+      {t:'接受媒体采访、给政府作证、出席行业活动——我是这个行业的脸。',s:[[11,2],[14,2],[6,1],[4,1],[0,1]]},
+    ]
+  },
+  {
+    q:'记者问你「AI会消灭人类吗？」你会怎么回答？',
+    opts:[
+      {t:'「这是我决定辞职的核心原因，我非常、非常担忧。」',s:[[9,3],[10,1]]},
+      {t:'「我们把安全放在第一位，Constitutional AI就是我们的答案。」',s:[[6,3],[10,1],[9,1]]},
+      {t:'「风险存在，但我们需要理性讨论，而不是恐慌性立法。」',s:[[0,2],[5,2],[11,1],[14,1]]},
+      {t:'「当前的LLM根本做不到这一步，这是科幻小说级别的担忧。」',s:[[2,3],[8,1]]},
+      {t:'「存在风险，但怯懦者不配创造历史，前进才是正道。」',s:[[3,3],[16,1]]},
+    ]
+  },
+  {
+    q:'有人公开质疑你的技术路线是「死路」，你会……',
+    opts:[
+      {t:'在推特发十条长线程逐条反驳，附上自己的论文引用，截图存证。',s:[[2,3],[3,1]]},
+      {t:'沉默几个月，然后悄悄发布一个颠覆性成果，不说一句话。',s:[[1,3],[8,1],[13,1]]},
+      {t:'写一篇深思熟虑的博客，用学者风度优雅地回应，但立场不动摇。',s:[[9,2],[10,3],[4,1],[6,1]]},
+      {t:'笑着说「走着瞧」，然后去融下一轮，用成功打脸。',s:[[0,2],[16,2],[18,1]]},
+      {t:'召开发布会，直接用新产品来回应，让数据说话。',s:[[7,3],[3,1],[0,1]]},
+    ]
+  },
+  {
+    q:'你最常挂在嘴边的词是——',
+    opts:[
+      {t:'「AGI」「超级智能」「时间比我们想象的短」',s:[[0,3],[1,2],[15,1]]},
+      {t:'「Scaling law」「Emergent capabilities」「我无可奉告」',s:[[1,3],[5,1]]},
+      {t:'「LLM不会推理」「世界模型」「本质上只是随机鹦鹉」',s:[[2,3]]},
+      {t:'「CUDA」「GB200」「算力」「供不应求」',s:[[7,3]]},
+      {t:'「Responsible AI」「以人为本」「多样性与包容」',s:[[4,3],[6,2],[10,1]]},
+      {t:'「连接」「Community」「Llama」「长期主义」',s:[[12,3],[17,1]]},
+    ]
+  },
+  {
+    q:'你的产品发布会画风是？',
+    opts:[
+      {t:'精心排练，每句话都反复打磨，最后抛出震惊全场的live demo。',s:[[0,3],[15,1],[5,1]]},
+      {t:'提前两周被自己泄露，正式发布会那天反而没人关注了。',s:[[3,3],[12,1]]},
+      {t:'一篇密集的技术长文加一个GitHub链接，没有PPT，没有彩带。',s:[[6,2],[8,2],[5,1],[16,1]]},
+      {t:'皮衣+渐进式高潮+把对手显卡参数直接列在PPT上做对比。',s:[[7,3]]},
+      {t:'悄悄上线，靠用户口口相传，流量起来之后再补一条推文。',s:[[12,1],[13,2],[16,1],[8,1]]},
+    ]
+  },
+  {
+    q:'和朋友吃饭，你的话题一定会聊到……',
+    opts:[
+      {t:'最近见了哪些创始人，下一轮融资的节奏和估值窗口。',s:[[0,2],[18,3],[11,1]]},
+      {t:'最近读的神经科学或意识哲学——「你有没有想过自由意志是什么？」',s:[[5,3],[9,2],[10,1],[1,1]]},
+      {t:'马斯克今天又说了什么让人无语的话。（你们两个有宿怨）',s:[[2,3]]},
+      {t:'「你知道我们新卡的Benchmark数据吗？让我给你看看对比表。」',s:[[7,3]]},
+      {t:'怎么让更多人获得AI教育，在线课程的完课率如何提升。',s:[[17,3],[4,2]]},
+    ]
+  },
+  {
+    q:'你对「开源」的态度是？',
+    opts:[
+      {t:'「开源是正义，闭源就是在作恶，知识本来就属于全人类。」',s:[[2,3],[12,2],[16,2]]},
+      {t:'「开源有价值，但某些能力必须谨慎，不能随便释放到世界上。」',s:[[6,3],[9,1],[10,1]]},
+      {t:'「我们支持开源精神，但核心模型权重……暂时不方便公开。」',s:[[0,2],[11,1],[14,1]]},
+      {t:'「开不开源不重要，重要的是产品有没有人真的在用。」',s:[[3,1],[14,2],[18,1],[7,1]]},
+      {t:'「把代码扔到GitHub上，爱用不用，我不care商业模式。」',s:[[8,2],[16,1],[13,1]]},
+    ]
+  },
+  {
+    q:'你的社交媒体画风是？',
+    opts:[
+      {t:'高频发帖，内容从AI到政治到火星，点赞量碾压全场，争议量也是。',s:[[3,3]]},
+      {t:'偶尔发一条推文，引发全球学术界大战，然后你冷静围观事态发酵。',s:[[2,3],[9,1]]},
+      {t:'几个月沉默，突然发一条让所有人窒息的消息，然后再次消失。',s:[[1,3],[6,1]]},
+      {t:'持续输出教程、课程、技术解析，专门服务初学者，评论区全是感谢。',s:[[17,3],[8,2]]},
+      {t:'官方声明格式，措辞精准，从不表达个人立场，让PR团队非常省心。',s:[[11,3],[14,2]]},
+    ]
+  },
+  {
+    q:'你认为通向AGI最关键的突破是什么？',
+    opts:[
+      {t:'「继续Scaling，更大模型，更多数据，更多算力，答案在规模里。」',s:[[0,3],[7,2],[1,1]]},
+      {t:'「世界模型+具身智能，语言模型只是过渡，真正的理解需要与物理世界交互。」',s:[[2,3],[5,2],[8,1]]},
+      {t:'「必须理解意识和智能的本质，不能只做工程，工程是皮，科学是骨。」',s:[[9,3],[10,2],[1,1],[5,1]]},
+      {t:'「先让现有AI惠及所有人，工具比理论更重要，普惠比速度更重要。」',s:[[17,3],[4,2],[18,1]]},
+      {t:'「强化学习+自主进化，AI要自己学会如何思考，而不是被人类教。」',s:[[5,2],[1,2],[8,1],[13,1]]},
+    ]
+  },
+  {
+    q:'一个创业团队来找你寻求建议，你说的第一句话是——',
+    opts:[
+      {t:'「你们的使命是什么？为什么是你们？为什么是现在？」（YC永恒三问）',s:[[0,3],[18,1]]},
+      {t:'「先把这十篇论文读透，基础不牢，什么都是沙滩城堡。」',s:[[9,2],[10,3],[2,1]]},
+      {t:'「先build，别想太多，用户会告诉你什么是真正的需求。」',s:[[8,2],[16,2],[3,1]]},
+      {t:'「你们的GPU拿到了吗？算力问题不解决，其他都是空谈。」',s:[[7,3]]},
+      {t:'「先想清楚你们的产品对社会的长期影响，然后再谈商业模式。」',s:[[4,2],[6,2],[10,1],[17,1]]},
+    ]
+  },
+  {
+    q:'最容易让你破防的情景是——',
+    opts:[
+      {t:'被质疑"是不是真的在乎AI安全"——然后你认真解释了三个小时。',s:[[6,3],[9,1],[10,1]]},
+      {t:'自己的名字出现在「AI灾难报道」旁边，而你确实无法完全否认这种可能。',s:[[9,3],[10,2],[1,1]]},
+      {t:'被认为是"过气"或者"不懂新技术的老人"——然后你决定写篇推文反击。',s:[[2,3],[13,1]]},
+      {t:'被自己创办的公司踢走，然后48小时内被请回来，然后一切照旧。',s:[[0,3],[15,2]]},
+      {t:'看到竞争对手发布了参数更强的硬件，而你的新卡还没到。',s:[[7,3],[3,1]]},
+    ]
+  },
+  {
+    q:'如果可以给你的AI系统命名，你会叫它——',
+    opts:[
+      {t:'一个充满使命感的神话名字：「Prometheus」「Athena」「Nexus」',s:[[0,2],[5,3],[15,1]]},
+      {t:'一个听起来温暖负责任的名字：「Claude」「Harmony」「Guardian」',s:[[6,3]]},
+      {t:'直接用版本号：「Model-70B-v3.1-chat」，朴实无华，工程师风格。',s:[[2,2],[13,3],[8,1]]},
+      {t:'一个争议性的名字，让所有人都来讨论，好的PR不如坏的PR。',s:[[3,3],[16,1]]},
+      {t:'让AI自己起名，尊重其潜在的主体性，这在哲学上是重要的。',s:[[1,3],[9,1],[10,1]]},
+      {t:'一个普通人能记住的名字：「小助手」「学伴」「智小明」',s:[[17,2],[11,1],[4,1]]},
+    ]
+  },
+  {
+    q:'你如何看待政府对AI的监管？',
+    opts:[
+      {t:'「欢迎监管！我们本来就在做最负责任的AI，来审查吧，我们怕谁。」',s:[[6,3],[9,1]]},
+      {t:'「监管是必要的，但要和行业充分沟通，不能一刀切。」',s:[[0,2],[11,2],[14,2]]},
+      {t:'「政府根本搞不懂技术，专家应该主导，让外行管内行是灾难。」',s:[[2,2],[3,2]]},
+      {t:'「欧洲的AI法案是在扼杀创新，我们要团结起来反对保守主义。」',s:[[3,2],[16,2],[12,1]]},
+      {t:'「这是全人类共同的议题，需要国际多边合作，单个国家无法独自解决。」',s:[[10,3],[4,2],[9,1],[17,1]]},
+    ]
+  },
+  {
+    q:'深夜独处时，你最可能在想什么？',
+    opts:[
+      {t:'「AGI可能比我们想象的近，这既让我无比兴奋，也让我无法入睡。」',s:[[0,3],[1,2],[15,1]]},
+      {t:'「我们在创造的东西，会是人类最后的发明吗？这值得吗？」',s:[[9,3],[10,2],[6,1]]},
+      {t:'「历史会证明我是对的，只是时间问题，我可以等。」',s:[[2,3],[3,2]]},
+      {t:'「这道题有多美，恰好这道题还能改变世界——我是最幸运的人。」',s:[[5,2],[8,2],[13,2],[1,1]]},
+      {t:'「还有多少人还没有机会学习AI？我怎样才能帮到更多人？」',s:[[17,3],[4,2]]},
+      {t:'我不睡觉。还有代码没写完，有什么好想的。',s:[[15,3],[8,1],[13,1]]},
+    ]
+  },
+];
+
+// ═══════════════════════════════════════════════════
+// GAME STATE & LOGIC
+// 为避免 Sam / LeCun 这类高频 archetype 吞掉长尾人物，结果阶段做了轻量平衡。
+// 同时给「祖师爷·图灵」一个真正可被解锁的触发窗口。
+// ═══════════════════════════════════════════════════
+let scores, curQ, picked, finalIdx, rankedResults;
+let toastTimer = null;
+const QUERY = new URLSearchParams(window.location.search);
+
+function resetQuizState(){
+  scores = new Array(CHARS.length).fill(0);
+  curQ = 0;
+  picked = null;
+  finalIdx = null;
+  rankedResults = [];
+}
+
+function showToast(message){
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function getShareToastMessage(){
+  return window.matchMedia('(max-width:580px)').matches
+    ? '已复制，打开微信 / X / 飞书粘贴即可'
+    : '已复制，发给朋友试试';
+}
+
+function fallbackCopyText(text){
+  if(typeof document.execCommand !== 'function') return false;
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  textarea.style.pointerEvents = 'none';
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, text.length);
+  const copied = document.execCommand('copy');
+  document.body.removeChild(textarea);
+  return copied;
+}
+
+async function writeClipboard(text){
+  if(navigator.clipboard && window.isSecureContext){
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+  return fallbackCopyText(text);
+}
+
+function buildBalanceWeights(){
+  const totals = new Array(CHARS.length).fill(0);
+  Qs.forEach(q => q.opts.forEach(opt => opt.s.forEach(([ci, pt]) => totals[ci] += pt)));
+  return totals.map((total, idx) => {
+    if(idx === 19 || total === 0) return 1;
+    return Math.pow(25 / total, 0.7);
+  });
+}
+
+const BALANCE_WEIGHTS = buildBalanceWeights();
+
+function getRankedResults(rawScores){
+  return rawScores
+    .map((raw, idx) => ({
+      idx,
+      raw,
+      weighted: idx === 19 ? 0 : raw * BALANCE_WEIGHTS[idx]
+    }))
+    .sort((a, b) => b.weighted - a.weighted);
+}
+
+function shouldUnlockTuring(ranked){
+  const [top1, top2, top3] = ranked;
+  if(!top1 || !top2 || !top3) return false;
+  return top1.weighted <= 8.5 && (top1.weighted - top2.weighted) <= 0.8 && (top1.weighted - top3.weighted) <= 1.3;
+}
+
+function startQuiz(){
+  resetQuizState();
+  document.getElementById('landing').style.display='none';
+  document.getElementById('result').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  window.scrollTo(0,0);
+  render();
+}
+
+function render(){
+  const total = Qs.length;
+  document.getElementById('pfill').style.width = (curQ/total*100)+'%';
+  document.getElementById('qctr').textContent =
+    String(curQ+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');
+  picked=null;
+  const q=Qs[curQ];
+  const L='ABCDEF';
+  document.getElementById('qbox').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">// QUESTION ${String(curQ+1).padStart(2,'0')}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="opts" id="opts">
+        ${q.opts.map((o,i)=>`
+          <button class="opt" id="opt${i}" onclick="pick(${i})">
+            <span class="opt-letter">${L[i]}</span>
+            <span>${o.t}</span>
+          </button>`).join('')}
+      </div>
+    </div>
+    <div id="nxtWrap"></div>`;
+}
+
+function pick(idx){
+  document.querySelectorAll('.opt').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('opt'+idx).classList.add('selected');
+  picked=idx;
+  document.getElementById('nxtWrap').innerHTML=`
+    <button class="btn-next" onclick="advance()">
+      ${curQ<Qs.length-1?'下一题 →':'查看我的结果 →'}
+    </button>`;
+}
+
+function advance(){
+  if(picked===null)return;
+  Qs[curQ].opts[picked].s.forEach(([ci,pt])=>scores[ci]+=pt);
+  curQ++;
+  if(curQ>=Qs.length) showResult();
+  else{ window.scrollTo(0,0); render(); }
+}
+
+function showResult(){
+  rankedResults = getRankedResults(scores);
+  finalIdx = shouldUnlockTuring(rankedResults) ? 19 : rankedResults[0].idx;
+  const c=CHARS[finalIdx];
+
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('result').style.display='block';
+  window.scrollTo(0,0);
+
+  const card=document.getElementById('rcard');
+  card.className='r-card'+(c.isHidden?' hidden':'');
+
+  document.getElementById('rbadge').innerHTML=c.isHidden
+    ?'<div class="hidden-badge">🔒 隐藏人物已解锁！祖师爷模式已启动</div>':'';
+
+  const ph=document.getElementById('rphoto');
+  ph.style.opacity=0;
+  ph.style.display='block';
+  document.getElementById('rfallback').style.display='none';
+  document.getElementById('rfallback').textContent=c.emoji;
+  ph.src=QUERY.get('brokenPhoto') === '1' ? 'images/__missing__.jpg' : c.photo;
+  ph.alt=c.name;
+
+  document.getElementById('rname').textContent=c.name;
+  document.getElementById('rrole').textContent=c.title;
+  document.getElementById('rtrait').textContent=c.trait;
+  document.getElementById('rquote').textContent=c.quote;
+  document.getElementById('rdesc').textContent=c.desc;
+  document.getElementById('rtags').innerHTML=c.tags.map(t=>`<span class="r-tag">${t}</span>`).join('');
+
+  const nearby = rankedResults
+    .filter(item => item.idx !== finalIdx)
+    .slice(0,2)
+    .map((item, offset) => {
+      const person = CHARS[item.idx];
+      const base = rankedResults[0].weighted || 1;
+      const pct = Math.max(61, Math.min(96, Math.round(item.weighted / base * 100)));
+      return `
+        <div class="r-near">
+          <div class="r-near-rank">TOP ${offset + 2}</div>
+          <div class="r-near-copy">
+            <div class="r-near-name">${person.name}</div>
+            <div class="r-near-title">${person.title}</div>
+          </div>
+          <div class="r-near-score">${pct}%</div>
+        </div>`;
+    }).join('');
+  document.getElementById('rnearby').innerHTML = nearby;
+
+  document.getElementById('rrels').innerHTML=`
+    <div class="r-rel">
+      <div class="r-rel-label">💫 灵魂伴侣</div>
+      <div class="r-rel-name">${c.soulmate}</div>
+    </div>
+    <div class="r-rel">
+      <div class="r-rel-label">⚡ 天生克星</div>
+      <div class="r-rel-name">${c.nemesis}</div>
+    </div>`;
+}
+
+async function copyResult(){
+  const c=CHARS[finalIdx];
+  const alt = rankedResults
+    .filter(item => item.idx !== finalIdx)
+    .slice(0,2)
+    .map(item => CHARS[item.idx].name);
+
+  const text=`🧠 AI人格测试结果
+
+我是：${c.name}
+${c.title}
+
+🎭 ${c.trait}
+
+💬 口头禅：${c.quote}
+
+🥈 第二像：${alt[0] || '暂无'}
+🥉 第三像：${alt[1] || '暂无'}
+
+💫 灵魂伴侣：${c.soulmate}
+⚡ 天生克星：${c.nemesis}
+
+—— 测测你是AI圈的哪位大佬？`;
+  try{
+    const copied = await writeClipboard(text);
+    showToast(copied ? getShareToastMessage() : '复制失败，请手动选择结果文案');
+  }catch(error){
+    showToast('复制失败，请手动选择结果文案');
+  }
+}
+
+function retryQuiz(){
+  resetQuizState();
+  const photo = document.getElementById('rphoto');
+  document.getElementById('result').style.display='none';
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('landing').style.display='flex';
+  document.getElementById('qbox').innerHTML='';
+  document.getElementById('pfill').style.width='0%';
+  document.getElementById('qctr').textContent='01 / 15';
+  document.getElementById('rbadge').innerHTML='';
+  document.getElementById('rname').textContent='';
+  document.getElementById('rrole').textContent='';
+  document.getElementById('rtrait').textContent='';
+  document.getElementById('rquote').textContent='';
+  document.getElementById('rdesc').textContent='';
+  document.getElementById('rtags').innerHTML='';
+  document.getElementById('rnearby').innerHTML='';
+  document.getElementById('rrels').innerHTML='';
+  document.getElementById('rfallback').style.display='none';
+  photo.src='';
+  photo.alt='';
+  photo.style.display='block';
+  document.getElementById('toast').classList.remove('show');
+  window.scrollTo(0,0);
+}
+
+function parseAutoAnswers(value){
+  if(!value) return null;
+  const answers = value.split(',').map(item => Number(item.trim()));
+  if(answers.length !== Qs.length) return null;
+  const isValid = answers.every((answer, questionIndex) =>
+    Number.isInteger(answer) && answer >= 0 && answer < Qs[questionIndex].opts.length
+  );
+  return isValid ? answers : null;
+}
+
+function runAutoScenarioFromQuery(){
+  const answers = parseAutoAnswers(QUERY.get('answers'));
+  if(!answers) return;
+  startQuiz();
+  answers.forEach(answer => {
+    pick(answer);
+    advance();
+  });
+}
+
+window.addEventListener('load', runAutoScenarioFromQuery);
+</script>
+</body>
+</html>
