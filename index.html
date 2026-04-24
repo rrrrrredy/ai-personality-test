@@ -80,9 +80,17 @@ body::after{
 }
 .l-eyebrow::before,.l-eyebrow::after{content:'';width:32px;height:1px;background:var(--accent);opacity:.4;}
 .l-title{
-  font-family:'Syne',sans-serif;font-weight:800;
+  font-family:'Noto Sans SC',sans-serif;font-weight:900;
   font-size:clamp(2.6rem,9vw,5rem);line-height:1.08;
   letter-spacing:-.03em;margin-bottom:10px;
+}
+.l-title .latin{
+  font-family:'Segoe UI',Arial,sans-serif;
+  display:inline-block;
+  font-weight:900;
+  letter-spacing:-.06em;
+  transform:translateY(-.04em);
+  margin:0 .03em 0 .01em;
 }
 .l-title .hi{color:var(--accent);}
 .l-sub{
@@ -369,7 +377,7 @@ body::after{
 <section id="landing">
   <div class="wrap" style="max-width:580px;">
     <div class="l-eyebrow">AI人格测试 · v1.1</div>
-    <h1 class="l-title">测测你是AI圈的<br><span class="hi">哪位大佬？</span></h1>
+    <h1 class="l-title">测测你是<span class="latin">AI</span>圈的<br><span class="hi">哪位大佬？</span></h1>
     <p class="l-sub">15道题，测出你在全球AI圈的人格坐标。<br>认真里带点损，适合截图发给同行。</p>
     <p class="l-meta"><span>15</span> 题 &nbsp;·&nbsp; 约 <span>4</span> 分钟 &nbsp;·&nbsp; <span>20</span> 种结果 &nbsp;·&nbsp; <span>1</span> 个隐藏人物</p>
     <div class="l-characters">
@@ -734,6 +742,29 @@ const PORTRAIT_PALETTES = [
   ['#1f2937','#111827','#e5e7eb','#f8fafc'],
 ];
 
+const PORTRAIT_STYLES = [
+  { skin:'#ebb790', hair:'#4f3028', shirt:'#111827', jacket:'#111827', accent:'#38bdf8', hairStyle:'sam', outfit:'tee', glasses:'none', beard:'none', eyes:'focus', mouth:'smile', brows:'lifted' },
+  { skin:'#eab895', hair:'#1c1b1d', shirt:'#151a28', jacket:'#23163b', accent:'#c084fc', hairStyle:'curly', outfit:'zip', glasses:'none', beard:'full', eyes:'calm', mouth:'flat', brows:'deep' },
+  { skin:'#f0c39c', hair:'#9ca3af', shirt:'#172033', jacket:'#172033', accent:'#f97316', hairStyle:'baldSide', outfit:'tee', glasses:'none', beard:'none', eyes:'serious', mouth:'smirk', brows:'flat' },
+  { skin:'#e8bc98', hair:'#5a4337', shirt:'#161b22', jacket:'#0f172a', accent:'#fb7185', hairStyle:'receding', outfit:'jacket', glasses:'none', beard:'none', eyes:'focus', mouth:'smirk', brows:'tilt' },
+  { skin:'#f0c7a8', hair:'#2d2322', shirt:'#1f2937', jacket:'#1f513d', accent:'#22c55e', hairStyle:'bob', outfit:'blazer', glasses:'none', beard:'none', eyes:'warm', mouth:'smile', brows:'gentle' },
+  { skin:'#e0b08f', hair:'#2b211f', shirt:'#16213a', jacket:'#2a2140', accent:'#f59e0b', hairStyle:'curlyShort', outfit:'blazer', glasses:'none', beard:'stubble', eyes:'calm', mouth:'smile', brows:'lifted' },
+  { skin:'#e7b795', hair:'#4a3427', shirt:'#1d2437', jacket:'#202937', accent:'#34d399', hairStyle:'sidePart', outfit:'blazer', glasses:'square', beard:'stubble', eyes:'focus', mouth:'flat', brows:'deep' },
+  { skin:'#e3b18e', hair:'#0f172a', shirt:'#111827', jacket:'#0b1220', accent:'#facc15', hairStyle:'jensen', outfit:'leather', glasses:'none', beard:'none', eyes:'focus', mouth:'smile', brows:'lifted' },
+  { skin:'#e7ba97', hair:'#2c2525', shirt:'#232c42', jacket:'#2d3748', accent:'#60a5fa', hairStyle:'messy', outfit:'hoodie', glasses:'none', beard:'stubble', eyes:'focus', mouth:'smile', brows:'gentle' },
+  { skin:'#efcfb3', hair:'#f3f4f6', shirt:'#3b4252', jacket:'#475569', accent:'#e5e7eb', hairStyle:'wildWhite', outfit:'cardigan', glasses:'none', beard:'whiteBeard', eyes:'sad', mouth:'flat', brows:'deep' },
+  { skin:'#e7bf9b', hair:'#4b5563', shirt:'#1f2937', jacket:'#364152', accent:'#67e8f9', hairStyle:'softWave', outfit:'blazer', glasses:'round', beard:'none', eyes:'warm', mouth:'smile', brows:'gentle' },
+  { skin:'#e1ab85', hair:'#171717', shirt:'#152238', jacket:'#1f2937', accent:'#60a5fa', hairStyle:'slick', outfit:'blazer', glasses:'none', beard:'none', eyes:'calm', mouth:'smile', brows:'gentle' },
+  { skin:'#e8bb99', hair:'#5a463a', shirt:'#20252d', jacket:'#2a3038', accent:'#84cc16', hairStyle:'shortCurl', outfit:'tee', glasses:'none', beard:'none', eyes:'focus', mouth:'smile', brows:'flat' },
+  { skin:'#e4b590', hair:'#5d4a3b', shirt:'#1f2937', jacket:'#334155', accent:'#a78bfa', hairStyle:'dean', outfit:'shirt', glasses:'square', beard:'goatee', eyes:'focus', mouth:'smile', brows:'lifted' },
+  { skin:'#d9a882', hair:'#2b2424', shirt:'#1b2437', jacket:'#293548', accent:'#14b8a6', hairStyle:'closeCrop', outfit:'blazer', glasses:'none', beard:'stubble', eyes:'calm', mouth:'smirk', brows:'flat' },
+  { skin:'#e4b592', hair:'#3d2d28', shirt:'#111827', jacket:'#111827', accent:'#38bdf8', hairStyle:'brockman', outfit:'tee', glasses:'none', beard:'trim', eyes:'focus', mouth:'smile', brows:'lifted' },
+  { skin:'#dca37f', hair:'#161616', shirt:'#241c2c', jacket:'#37223f', accent:'#f472b6', hairStyle:'swept', outfit:'blazer', glasses:'none', beard:'fullShort', eyes:'serious', mouth:'smirk', brows:'tilt' },
+  { skin:'#ebbc96', hair:'#171717', shirt:'#1d3b5c', jacket:'#23425f', accent:'#38bdf8', hairStyle:'teacher', outfit:'blazer', glasses:'none', beard:'none', eyes:'warm', mouth:'smile', brows:'gentle' },
+  { skin:'#e8c0a0', hair:'#5c4a43', shirt:'#202938', jacket:'#263244', accent:'#8b5cf6', hairStyle:'reid', outfit:'blazer', glasses:'round', beard:'none', eyes:'warm', mouth:'smile', brows:'gentle' },
+  { skin:'#efd1b2', hair:'#5b4338', shirt:'#2d3748', jacket:'#3b4252', accent:'#f0c040', hairStyle:'turing', outfit:'tie', glasses:'none', beard:'none', eyes:'focus', mouth:'smile', brows:'gentle' },
+];
+
 function escapeSvgText(value){
   return String(value)
     .replace(/&/g, '&amp;')
@@ -743,11 +774,214 @@ function escapeSvgText(value){
     .replace(/'/g, '&#39;');
 }
 
+function alpha(hex, opacity){
+  const normalized = hex.replace('#', '');
+  const full = normalized.length === 3
+    ? normalized.split('').map(char => char + char).join('')
+    : normalized;
+  const bigint = parseInt(full, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+function buildHairBack(style){
+  switch(style.hairStyle){
+    case 'bob':
+      return `<path d="M90 195c0-75 52-118 110-118 63 0 114 49 114 131v100c0 48-36 99-114 116-78-17-110-68-110-116V195Z" fill="${style.hair}"/>`;
+    case 'curly':
+    case 'curlyShort':
+      return `<g fill="${style.hair}"><circle cx="132" cy="142" r="44"/><circle cx="183" cy="108" r="60"/><circle cx="246" cy="122" r="48"/><circle cx="286" cy="170" r="34"/><ellipse cx="200" cy="210" rx="126" ry="82"/></g>`;
+    case 'wildWhite':
+      return `<g fill="${style.hair}"><circle cx="118" cy="150" r="42"/><circle cx="160" cy="110" r="44"/><circle cx="222" cy="108" r="46"/><circle cx="280" cy="150" r="40"/><ellipse cx="198" cy="182" rx="134" ry="72"/></g>`;
+    case 'baldSide':
+      return `<g fill="${style.hair}"><path d="M82 208c8-44 28-74 62-96l8 30c-16 18-29 44-34 78-9 62-2 93 11 138H94c-18-43-21-90-12-150Z"/><path d="M314 208c-8-44-28-74-62-96l-8 30c16 18 29 44 34 78 9 62 2 93-11 138h35c18-43 21-90 12-150Z"/></g>`;
+    case 'closeCrop':
+      return `<ellipse cx="200" cy="180" rx="126" ry="82" fill="${style.hair}" opacity="0.9"/>`;
+    default:
+      return `<ellipse cx="200" cy="182" rx="126" ry="88" fill="${style.hair}"/>`;
+  }
+}
+
+function buildHairFront(style){
+  switch(style.hairStyle){
+    case 'sam':
+      return `<path d="M100 205c10-82 60-126 118-126 69 0 114 50 116 137-21-31-53-52-95-58-47-6-87 11-139 47 1-16 1-28 0-38v38c-3-38-3-71 0-100Z" fill="${style.hair}"/>`;
+    case 'curly':
+      return `<g fill="${style.hair}"><circle cx="116" cy="170" r="28"/><circle cx="154" cy="128" r="36"/><circle cx="208" cy="118" r="36"/><circle cx="258" cy="140" r="30"/><path d="M112 184c26-34 66-54 114-54 42 0 73 12 102 36v48c-32-28-75-42-128-42-55 0-98 18-128 53v-41Z"/></g>`;
+    case 'baldSide':
+      return `<path d="M130 185c22-22 48-30 74-30 26 0 52 8 74 30-22-5-48-7-74-7s-52 2-74 7Z" fill="${alpha(style.hair,0.45)}"/>`;
+    case 'receding':
+      return `<path d="M110 188c8-64 48-102 96-102 43 0 75 17 96 58-32-17-59-23-84-20-36 4-71 24-108 64v0Z" fill="${style.hair}"/>`;
+    case 'bob':
+      return `<path d="M88 205c6-78 49-122 112-122 71 0 112 53 112 134-27-27-68-39-118-39-53 0-89 13-106 27v0Z" fill="${style.hair}"/>`;
+    case 'curlyShort':
+      return `<g fill="${style.hair}"><circle cx="128" cy="152" r="24"/><circle cx="168" cy="126" r="28"/><circle cx="208" cy="124" r="30"/><circle cx="248" cy="146" r="24"/><path d="M112 186c29-27 58-37 92-37 42 0 74 13 106 42-22-9-55-13-97-13-43 0-76 4-101 8v0Z"/></g>`;
+    case 'sidePart':
+      return `<path d="M102 205c8-76 49-121 104-121 56 0 96 29 110 88-31-15-60-23-91-23-49 0-90 18-123 56v0Z" fill="${style.hair}"/><path d="M228 86c6 26 6 50 0 74" stroke="${alpha('#ffffff',0.18)}" stroke-width="4" stroke-linecap="round"/>`;
+    case 'jensen':
+      return `<path d="M96 216c0-83 47-130 113-130 66 0 113 48 112 132-33-26-72-39-120-39-44 0-79 11-105 27v10Z" fill="${style.hair}"/><path d="M160 100c39-13 92-9 126 37" stroke="${alpha('#ffffff',0.18)}" stroke-width="5" stroke-linecap="round"/>`;
+    case 'messy':
+      return `<path d="M101 208c8-78 55-123 113-123 61 0 101 39 112 114-31-23-67-35-109-35-45 0-83 14-116 44Z" fill="${style.hair}"/><path d="M127 127l22-30M189 102l12-22M246 120l26-26" stroke="${style.hair}" stroke-width="16" stroke-linecap="round"/>`;
+    case 'wildWhite':
+      return `<path d="M96 214c7-69 48-109 106-109 63 0 108 43 114 120-28-27-65-40-113-40-46 0-81 10-107 29Z" fill="${style.hair}"/>`;
+    case 'softWave':
+      return `<path d="M100 210c6-78 49-120 106-120 61 0 103 41 112 117-33-20-68-29-109-29-42 0-78 10-109 32Z" fill="${style.hair}"/>`;
+    case 'slick':
+      return `<path d="M104 208c10-76 53-118 110-118 59 0 99 36 110 106-34-20-69-30-106-30-44 0-83 14-114 42Z" fill="${style.hair}"/><path d="M148 110c42-8 98 8 135 54" stroke="${alpha('#ffffff',0.16)}" stroke-width="4" stroke-linecap="round"/>`;
+    case 'shortCurl':
+      return `<path d="M112 204c4-68 46-109 101-109 54 0 95 33 106 94-30-15-64-22-104-22-39 0-74 12-103 37Z" fill="${style.hair}"/>`;
+    case 'dean':
+      return `<path d="M100 206c12-72 55-114 109-114 54 0 95 35 109 99-32-16-63-24-99-24-49 0-84 14-119 39Z" fill="${style.hair}"/>`;
+    case 'closeCrop':
+      return `<path d="M118 186c21-18 48-27 82-27 34 0 61 9 82 27-28-5-55-8-82-8-27 0-54 3-82 8Z" fill="${alpha(style.hair,0.75)}"/>`;
+    case 'brockman':
+      return `<path d="M100 205c7-76 48-119 106-119 59 0 98 37 110 109-32-18-67-27-107-27-43 0-78 11-109 37Z" fill="${style.hair}"/>`;
+    case 'swept':
+      return `<path d="M100 205c12-74 53-117 108-117 59 0 99 37 110 109-23-20-54-31-90-33-53-3-95 16-128 41Z" fill="${style.hair}"/>`;
+    case 'teacher':
+      return `<path d="M105 204c8-74 51-116 106-116 59 0 98 36 109 105-29-17-63-25-103-25-44 0-79 12-112 36Z" fill="${style.hair}"/>`;
+    case 'reid':
+      return `<path d="M102 208c10-75 52-117 107-117 58 0 100 38 109 109-30-18-66-28-105-28-42 0-79 11-111 36Z" fill="${style.hair}"/>`;
+    case 'turing':
+      return `<path d="M104 213c6-79 51-123 111-123 56 0 95 30 107 102-32-19-66-27-103-24-41 4-79 19-115 45Z" fill="${style.hair}"/><path d="M170 98c17 31 21 64 11 99" stroke="${alpha('#ffffff',0.18)}" stroke-width="4" stroke-linecap="round"/>`;
+    default:
+      return `<path d="M102 205c8-76 49-120 107-120 61 0 102 39 112 113-31-21-67-31-110-31-43 0-79 13-109 38Z" fill="${style.hair}"/>`;
+  }
+}
+
+function buildOutfit(style){
+  const shirtShade = alpha(style.shirt, 0.86);
+  switch(style.outfit){
+    case 'blazer':
+      return `
+        <path d="M70 560c14-96 82-162 166-162 85 0 152 66 164 162v132H70V560Z" fill="${style.jacket}"/>
+        <path d="M156 434h84l34 258h-146l28-258Z" fill="${shirtShade}"/>
+        <path d="M160 434 112 692h66l22-182-40-76Z" fill="${alpha('#ffffff',0.08)}"/>
+        <path d="M240 434 288 692h-66l-22-182 40-76Z" fill="${alpha('#ffffff',0.08)}"/>`;
+    case 'leather':
+      return `
+        <path d="M68 562c18-99 84-164 168-164 84 0 150 65 168 164v130H68V562Z" fill="${style.jacket}"/>
+        <path d="M155 430h90l22 262H133l22-262Z" fill="${alpha('#0b1220',0.88)}"/>
+        <path d="M142 474h116" stroke="${alpha('#ffffff',0.18)}" stroke-width="6" stroke-linecap="round"/>
+        <path d="M125 418c18 8 42 14 75 14s57-6 75-14" stroke="${alpha('#ffffff',0.12)}" stroke-width="8" stroke-linecap="round"/>`;
+    case 'hoodie':
+      return `
+        <path d="M68 566c16-100 83-168 168-168 86 0 153 68 168 168v126H68V566Z" fill="${style.jacket}"/>
+        <path d="M116 442c20-18 48-30 84-30 36 0 64 12 84 30l-34 76h-100l-34-76Z" fill="${alpha('#ffffff',0.08)}"/>
+        <path d="M168 432c10 24 20 38 32 46 12-8 22-22 32-46" stroke="${alpha('#ffffff',0.22)}" stroke-width="5" stroke-linecap="round"/>`;
+    case 'cardigan':
+      return `
+        <path d="M74 564c18-98 81-164 164-164 84 0 147 66 164 164v128H74V564Z" fill="${style.jacket}"/>
+        <path d="M166 430h68v262h-68V430Z" fill="${shirtShade}"/>
+        <path d="M200 432v260" stroke="${alpha('#ffffff',0.24)}" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="200" cy="508" r="5" fill="${alpha('#ffffff',0.28)}"/>
+        <circle cx="200" cy="560" r="5" fill="${alpha('#ffffff',0.28)}"/>`;
+    case 'shirt':
+      return `
+        <path d="M70 566c17-100 84-166 167-166 84 0 151 66 165 166v126H70V566Z" fill="${style.jacket}"/>
+        <path d="M148 430h104l18 262H130l18-262Z" fill="${alpha('#f8fafc',0.9)}"/>
+        <path d="M200 430 180 502h40L200 430Z" fill="${alpha(style.accent,0.85)}"/>
+        <path d="M200 502v190" stroke="${alpha(style.accent,0.75)}" stroke-width="12" stroke-linecap="round"/>`;
+    case 'tie':
+      return `
+        <path d="M70 566c17-100 84-166 167-166 84 0 151 66 165 166v126H70V566Z" fill="${style.jacket}"/>
+        <path d="M148 430h104l18 262H130l18-262Z" fill="${alpha('#f8fafc',0.92)}"/>
+        <path d="M200 430 178 486h44L200 430Z" fill="${alpha(style.accent,0.9)}"/>
+        <path d="M200 486 176 692h48L200 486Z" fill="${alpha(style.accent,0.82)}"/>`;
+    case 'jacket':
+      return `
+        <path d="M70 564c18-98 82-164 166-164 85 0 149 66 166 164v128H70V564Z" fill="${style.jacket}"/>
+        <path d="M164 430h72l34 262H130l34-262Z" fill="${shirtShade}"/>`;
+    case 'zip':
+      return `
+        <path d="M72 564c18-99 82-164 164-164 84 0 148 65 166 164v128H72V564Z" fill="${style.jacket}"/>
+        <path d="M200 432v258" stroke="${alpha('#ffffff',0.32)}" stroke-width="5" stroke-linecap="round"/>
+        <rect x="192" y="474" width="16" height="22" rx="7" fill="${alpha('#ffffff',0.4)}"/>`;
+    default:
+      return `
+        <path d="M72 564c18-99 82-164 166-164 84 0 148 65 166 164v128H72V564Z" fill="${style.jacket}"/>
+        <path d="M154 432h92l24 260H130l24-260Z" fill="${shirtShade}"/>`;
+  }
+}
+
+function buildGlasses(style){
+  if(style.glasses === 'round'){
+    return `<g fill="none" stroke="${alpha('#1f2937',0.92)}" stroke-width="7"><circle cx="156" cy="249" r="28"/><circle cx="244" cy="249" r="28"/><path d="M184 249h32"/></g>`;
+  }
+  if(style.glasses === 'square'){
+    return `<g fill="none" stroke="${alpha('#1f2937',0.92)}" stroke-width="7"><rect x="124" y="222" width="62" height="52" rx="15"/><rect x="214" y="222" width="62" height="52" rx="15"/><path d="M186 248h28"/></g>`;
+  }
+  return '';
+}
+
+function buildFacialHair(style){
+  switch(style.beard){
+    case 'full':
+      return `<path d="M126 290c11 62 44 118 74 136 30-18 63-74 74-136-24 17-46 24-74 24s-50-7-74-24Z" fill="${alpha(style.hair,0.96)}"/>`;
+    case 'whiteBeard':
+      return `<path d="M126 288c14 76 44 128 74 150 30-22 60-74 74-150-26 17-50 25-74 25s-48-8-74-25Z" fill="${alpha(style.hair,0.98)}"/>`;
+    case 'trim':
+      return `<path d="M140 304c12 28 31 48 60 59 29-11 48-31 60-59-21 9-40 13-60 13s-39-4-60-13Z" fill="${alpha(style.hair,0.95)}"/>`;
+    case 'fullShort':
+      return `<path d="M132 294c14 44 40 78 68 92 28-14 54-48 68-92-23 13-46 19-68 19s-45-6-68-19Z" fill="${alpha(style.hair,0.96)}"/>`;
+    case 'goatee':
+      return `<path d="M182 308c3 24 8 46 18 63 10-17 15-39 18-63-13 5-23 7-36 7s-23-2-36-7Z" fill="${alpha(style.hair,0.96)}"/>`;
+    case 'stubble':
+      return `<path d="M146 296c21 10 38 14 54 14s33-4 54-14" stroke="${alpha(style.hair,0.42)}" stroke-width="7" stroke-linecap="round"/>`;
+    default:
+      return '';
+  }
+}
+
+function buildBrows(style){
+  switch(style.brows){
+    case 'deep':
+      return `<path d="M132 209c16-12 31-17 48-17M220 192c17 0 32 5 48 17" stroke="${alpha(style.hair,0.9)}" stroke-width="8" stroke-linecap="round"/>`;
+    case 'flat':
+      return `<path d="M132 200h48M220 200h48" stroke="${alpha(style.hair,0.86)}" stroke-width="8" stroke-linecap="round"/>`;
+    case 'tilt':
+      return `<path d="M132 208c16-10 31-13 48-10M220 198c17-3 32 0 48 10" stroke="${alpha(style.hair,0.88)}" stroke-width="8" stroke-linecap="round"/>`;
+    case 'gentle':
+      return `<path d="M132 206c15-9 31-12 48-9M220 197c17-3 33 0 48 9" stroke="${alpha(style.hair,0.78)}" stroke-width="7" stroke-linecap="round"/>`;
+    default:
+      return `<path d="M132 205c15-12 31-16 48-14M220 191c17-2 33 2 48 14" stroke="${alpha(style.hair,0.84)}" stroke-width="8" stroke-linecap="round"/>`;
+  }
+}
+
+function buildEyes(style){
+  switch(style.eyes){
+    case 'serious':
+      return `<g stroke="#111827" stroke-width="7" stroke-linecap="round"><path d="M138 236c10-6 18-9 25-9 8 0 16 3 25 9"/><path d="M212 236c10-6 18-9 25-9 8 0 16 3 25 9"/></g>`;
+    case 'warm':
+      return `<g stroke="#111827" stroke-width="6" stroke-linecap="round"><path d="M140 240c9 8 17 12 24 12 8 0 16-4 24-12"/><path d="M212 240c9 8 17 12 24 12 8 0 16-4 24-12"/></g>`;
+    case 'sad':
+      return `<g stroke="#111827" stroke-width="6" stroke-linecap="round"><path d="M140 246c9-8 17-12 24-12 8 0 16 4 24 12"/><path d="M212 246c9-8 17-12 24-12 8 0 16 4 24 12"/></g>`;
+    case 'calm':
+      return `<g fill="#111827"><ellipse cx="164" cy="242" rx="8" ry="10"/><ellipse cx="236" cy="242" rx="8" ry="10"/></g>`;
+    default:
+      return `<g fill="#111827"><ellipse cx="164" cy="239" rx="8" ry="11"/><ellipse cx="236" cy="239" rx="8" ry="11"/></g>`;
+  }
+}
+
+function buildMouth(style){
+  switch(style.mouth){
+    case 'flat':
+      return `<path d="M166 302c11 4 23 6 34 6s23-2 34-6" stroke="${alpha('#8b4513',0.55)}" stroke-width="6" stroke-linecap="round"/>`;
+    case 'smirk':
+      return `<path d="M166 298c17 7 34 10 52 10 10 0 20-2 30-5" stroke="${alpha('#8b4513',0.6)}" stroke-width="6" stroke-linecap="round"/>`;
+    default:
+      return `<path d="M164 294c16 16 35 24 56 24 18 0 36-7 52-22" stroke="${alpha('#8b4513',0.58)}" stroke-width="6" stroke-linecap="round" fill="none"/>`;
+  }
+}
+
 function buildPortraitDataUri(char, idx){
   const [bgA, bgB, accent, text] = PORTRAIT_PALETTES[idx % PORTRAIT_PALETTES.length];
-  const titleLines = char.title.split(' · ').slice(0, 3);
-  const tagLine = char.tags.slice(0, 3).join(' · ');
-  const eyebrow = char.isHidden ? 'HIDDEN RESULT' : 'AI PERSONALITY TEST';
+  const style = PORTRAIT_STYLES[idx] || PORTRAIT_STYLES[0];
+  const frame = char.isHidden ? '#f0c040' : style.accent || accent;
+  const glow = char.isHidden ? alpha('#f0c040', 0.28) : alpha(style.accent || accent, 0.26);
+  const skinShadow = alpha('#8b5e3c', 0.16);
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-label="${escapeSvgText(char.name)}">
       <defs>
@@ -756,34 +990,52 @@ function buildPortraitDataUri(char, idx){
           <stop offset="100%" stop-color="${bgB}"/>
         </linearGradient>
         <radialGradient id="glow" cx="50%" cy="30%" r="70%">
-          <stop offset="0%" stop-color="${accent}" stop-opacity="0.34"/>
-          <stop offset="100%" stop-color="${accent}" stop-opacity="0"/>
+          <stop offset="0%" stop-color="${char.isHidden ? '#f0c040' : style.accent || accent}" stop-opacity="0.42"/>
+          <stop offset="100%" stop-color="${char.isHidden ? '#f0c040' : style.accent || accent}" stop-opacity="0"/>
         </radialGradient>
       </defs>
       <rect width="640" height="800" rx="0" fill="url(#bg)"/>
       <rect width="640" height="800" fill="url(#glow)"/>
-      <g opacity="0.08" stroke="${accent}">
-        <path d="M0 120H640"/>
-        <path d="M0 220H640"/>
-        <path d="M0 320H640"/>
-        <path d="M0 420H640"/>
-        <path d="M0 520H640"/>
-        <path d="M0 620H640"/>
-        <path d="M120 0V800"/>
-        <path d="M220 0V800"/>
-        <path d="M320 0V800"/>
-        <path d="M420 0V800"/>
-        <path d="M520 0V800"/>
+      <g opacity="0.08" stroke="${frame}">
+        <path d="M0 110H640"/>
+        <path d="M0 210H640"/>
+        <path d="M0 310H640"/>
+        <path d="M0 410H640"/>
+        <path d="M0 510H640"/>
+        <path d="M0 610H640"/>
+        <path d="M0 710H640"/>
+        <path d="M110 0V800"/>
+        <path d="M210 0V800"/>
+        <path d="M310 0V800"/>
+        <path d="M410 0V800"/>
+        <path d="M510 0V800"/>
       </g>
-      <rect x="28" y="28" width="584" height="744" rx="24" fill="none" stroke="${char.isHidden ? '#f0c040' : accent}" stroke-width="2"/>
-      <text x="50" y="88" fill="${char.isHidden ? '#f0c040' : accent}" font-size="24" font-family="'Fira Code', monospace" letter-spacing="2">${escapeSvgText(eyebrow)}</text>
-      <text x="50" y="290" fill="${accent}" font-size="160">${escapeSvgText(char.emoji)}</text>
-      <text x="50" y="408" fill="${text}" font-size="54" font-weight="800" font-family="'Syne', 'Noto Sans SC', sans-serif">${escapeSvgText(char.name)}</text>
-      ${titleLines.map((line, lineIdx) => `
-      <text x="50" y="${455 + lineIdx * 34}" fill="${accent}" font-size="22" font-family="'Fira Code', monospace">${escapeSvgText(line)}</text>`).join('')}
-      <text x="50" y="602" fill="${text}" font-size="24" font-family="'Noto Serif SC', serif">${escapeSvgText(char.trait)}</text>
-      <rect x="50" y="652" width="540" height="1" fill="${accent}" opacity="0.25"/>
-      <text x="50" y="700" fill="${text}" font-size="20" font-family="'Fira Code', monospace">${escapeSvgText(tagLine)}</text>
+      <circle cx="320" cy="262" r="180" fill="${glow}"/>
+      <rect x="28" y="28" width="584" height="744" rx="24" fill="none" stroke="${frame}" stroke-width="2"/>
+      <g transform="translate(120 70)">
+        ${buildOutfit(style)}
+        <rect x="172" y="326" width="24" height="82" rx="12" fill="${style.skin}"/>
+        <rect x="204" y="326" width="24" height="82" rx="12" fill="${style.skin}"/>
+        ${buildHairBack(style)}
+        <ellipse cx="122" cy="248" rx="17" ry="26" fill="${style.skin}"/>
+        <ellipse cx="278" cy="248" rx="17" ry="26" fill="${style.skin}"/>
+        <ellipse cx="200" cy="240" rx="108" ry="126" fill="${style.skin}" stroke="${skinShadow}" stroke-width="2"/>
+        <ellipse cx="154" cy="278" rx="18" ry="9" fill="${alpha('#f97373',0.12)}"/>
+        <ellipse cx="246" cy="278" rx="18" ry="9" fill="${alpha('#f97373',0.12)}"/>
+        ${buildBrows(style)}
+        ${buildEyes(style)}
+        <path d="M200 236c-7 24-9 42-7 64 2 14 10 24 20 28" stroke="${alpha('#8b5e3c',0.34)}" stroke-width="5" stroke-linecap="round" fill="none"/>
+        ${buildMouth(style)}
+        ${buildFacialHair(style)}
+        ${buildGlasses(style)}
+        ${buildHairFront(style)}
+      </g>
+      <g transform="translate(44 44)">
+        <rect width="172" height="38" rx="19" fill="${alpha(frame,0.16)}" stroke="${alpha(frame,0.45)}"/>
+        <circle cx="20" cy="19" r="6" fill="${frame}"/>
+        <rect x="36" y="14" width="78" height="10" rx="5" fill="${alpha(frame,0.68)}"/>
+        <rect x="122" y="14" width="34" height="10" rx="5" fill="${alpha(text,0.42)}"/>
+      </g>
     </svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
