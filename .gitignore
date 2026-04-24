@@ -2,6 +2,8 @@ Thumbs.db
 .DS_Store
 *.log
 .wrangler/
+.npm-cache/
+.playwright/
 landing-*.png
 result-*.png
 fallback-*.png
