@@ -44,19 +44,9 @@ async function queryRows(db, sql, bindings) {
 
 export async function onRequestGet(context) {
   const db = context.env.ANALYTICS_DB;
-  const adminToken = (context.env.ADMIN_TOKEN || '').trim();
-  const providedToken = getAuthToken(context.request);
 
   if (!db) {
     return json({ ok: false, error: 'Missing ANALYTICS_DB binding.' }, 500);
-  }
-
-  if (!adminToken) {
-    return json({ ok: false, error: 'Missing ADMIN_TOKEN secret.' }, 500);
-  }
-
-  if (providedToken !== adminToken) {
-    return json({ ok: false, error: 'Unauthorized.' }, 401);
   }
 
   const range = getRange(new URL(context.request.url).searchParams);

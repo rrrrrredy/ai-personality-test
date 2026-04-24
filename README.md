@@ -10,7 +10,8 @@
 说明：
 
 - 监控后台页面已经部署到 Cloudflare Pages
-- 打开监控后台后，如果看到“等待 token”或接口报错，优先检查 `MONITORING.md` 里的 D1 与 `ADMIN_TOKEN` 配置
+- 当前监控后台已支持直接打开，无需手动输入 token
+- 如果页面出现接口报错，优先检查 `MONITORING.md` 里的 D1 配置
 
 当前版本基于 `ai-boss-quiz-v2.html` 整理为可交付目录，主入口已切到 `index.html`，并补了以下交付项：
 

@@ -8,7 +8,8 @@
 说明：
 
 - 监控后台页面已经部署到 Cloudflare Pages
-- 如果你打开后看到 401 / 500 / “等待 token”，优先检查 `ADMIN_TOKEN` 和 D1 绑定是否已配置
+- 当前监控后台支持直接打开，不再要求手动输入 token
+- 如果你打开后看到 500，优先检查 D1 绑定是否已配置
 
 这套监控现在由 3 部分组成：
 
@@ -52,9 +53,11 @@ npx wrangler d1 execute ai-personality-test-analytics --remote --file=d1/schema.
 5. Variable name 填：`ANALYTICS_DB`
 6. 选择刚创建的数据库
 
-## 4. 配置后台访问 token
+## 4. 可选：配置后台访问 token
 
-在 Cloudflare Pages 后台：
+当前版本已经支持直接打开监控后台，这一步不是必需项。
+
+如果你后面还想保留一个额外的私有访问口令层，可以继续在 Cloudflare Pages 后台配置：
 
 1. 进入 `Settings > Variables and Secrets`
 2. 新增 secret
@@ -78,8 +81,6 @@ copy .dev.vars.example .dev.vars
 部署完成后访问：
 
 - `/monitor/`
-
-首次打开会要求输入 `ADMIN_TOKEN`，浏览器会保存在本地 `localStorage`，后续可直接进入。
 
 ## 当前采集的事件
 

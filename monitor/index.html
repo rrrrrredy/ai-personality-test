@@ -336,7 +336,7 @@ tbody tr:hover{background:rgba(255,255,255,.02);}
           <button class="range-btn" data-range="90d">90 天</button>
         </div>
         <div class="control-row">
-          <button class="ghost-btn" id="tokenToggle">Token 设置</button>
+          <button class="ghost-btn" id="tokenToggle">访问设置</button>
           <button class="primary-btn" id="refreshBtn">刷新数据</button>
         </div>
         <div class="status-pill" id="statusPill">状态：<strong>等待加载</strong></div>
@@ -345,13 +345,13 @@ tbody tr:hover{background:rgba(255,255,255,.02);}
 
     <section class="config" id="configCard">
       <div class="config-copy">
-        <h2>后台访问 token</h2>
-        <p>统计 API 默认要求 `ADMIN_TOKEN`。你可以把 token 输入到这里，浏览器会只在本地保存，用于请求 `/api/stats`。</p>
-        <div class="config-note">如果你还没在 Cloudflare Pages 里配置 D1 binding 和 `ADMIN_TOKEN`，先看仓库里的 `MONITORING.md`。</div>
+        <h2>可选访问设置</h2>
+        <p>当前监控后台支持直接打开。下面的 token 输入框保留给后续调试或兼容旧链接，不再是查看数据的前置条件。</p>
+        <div class="config-note">如果页面报 500，优先检查仓库里的 `MONITORING.md`，确认 Cloudflare Pages 已绑定 D1。</div>
       </div>
       <div class="config-form">
         <label class="sr-only" for="tokenInput">Admin Token</label>
-        <input class="token-input" id="tokenInput" type="password" placeholder="输入 ADMIN_TOKEN">
+        <input class="token-input" id="tokenInput" type="password" placeholder="可选：输入 token">
         <button class="primary-btn" id="saveTokenBtn">保存并加载</button>
         <button class="ghost-btn" id="clearTokenBtn">清除</button>
       </div>
@@ -661,26 +661,15 @@ async function loadStats() {
   const token = getToken();
   tokenInput.value = token;
 
-  if (!token) {
-    setStatus('等待 token', 'var(--amber)');
-    renderEmpty(trendChartWrap, '先填写 ADMIN_TOKEN，再请求统计数据。');
-    renderEmpty(resultDistribution, '先填写 ADMIN_TOKEN。');
-    renderEmpty(questionProgress, '先填写 ADMIN_TOKEN。');
-    renderEmpty(sourceBreakdown, '先填写 ADMIN_TOKEN。');
-    renderEmpty(deviceBreakdown, '先填写 ADMIN_TOKEN。');
-    recentTableBody.innerHTML = '<tr><td colspan="5" class="empty">先填写 ADMIN_TOKEN。</td></tr>';
-    return;
-  }
-
   if (isLoading) return;
   isLoading = true;
   setStatus('加载中', 'var(--accent)');
 
   try {
+    const headers = {};
+    if (token) headers['x-admin-token'] = token;
     const response = await fetch(`/api/stats?range=${encodeURIComponent(currentRange)}`, {
-      headers: {
-        'x-admin-token': token,
-      },
+      headers,
       cache: 'no-store',
     });
     const payload = await response.json();
