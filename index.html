@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="AI人格测试：15道题，测测你是AI圈的哪位大佬。从 Sam Altman 到图灵祖师爷，20种结果，1个隐藏人物。纯前端单文件，可本地打开，也可直接部署。">
+<meta name="description" content="AI人格测试：15道题，测测你是AI圈的哪位大佬。从 Sam Altman 到图灵祖师爷，20种结果，1个隐藏人物。纯前端静态页，可本地打开，也可直接部署。">
 <meta name="theme-color" content="#06060e">
 <meta name="robots" content="index,follow">
 <meta property="og:title" content="AI人格测试｜测测你是AI圈的哪位大佬？">
@@ -1216,6 +1216,87 @@ const Qs = [
 let scores, curQ, picked, finalIdx, rankedResults;
 let toastTimer = null;
 const QUERY = new URLSearchParams(window.location.search);
+const QUIZ_VERSION = 'v1.2';
+const ANALYTICS_ENDPOINT = '/api/collect';
+const ANALYTICS_VISITOR_KEY = 'ai-quiz-visitor-id';
+const ANALYTICS_SESSION_KEY = 'ai-quiz-session-id';
+const IS_QA_TRAFFIC = QUERY.has('answers') || QUERY.get('brokenPhoto') === '1' || QUERY.get('qa') === '1';
+let hasTrackedPageView = false;
+
+function createOpaqueId(){
+  if(window.crypto && typeof window.crypto.randomUUID === 'function'){
+    return window.crypto.randomUUID().replace(/-/g,'');
+  }
+  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2,14)}`;
+}
+
+function getOrCreateStoredId(storage, key){
+  try{
+    const existing = storage.getItem(key);
+    if(existing) return existing;
+    const next = createOpaqueId();
+    storage.setItem(key, next);
+    return next;
+  }catch(error){
+    return '';
+  }
+}
+
+const VISITOR_ID = getOrCreateStoredId(window.localStorage, ANALYTICS_VISITOR_KEY);
+const SESSION_ID = getOrCreateStoredId(window.sessionStorage, ANALYTICS_SESSION_KEY);
+
+function getDeviceType(){
+  const width = Math.min(window.innerWidth || 0, window.screen?.width || Infinity);
+  if(width <= 640) return 'mobile';
+  if(width <= 1024) return 'tablet';
+  return 'desktop';
+}
+
+function analyticsEnabled(){
+  return window.location.protocol !== 'file:' && Boolean(VISITOR_ID) && Boolean(SESSION_ID);
+}
+
+function getAnalyticsBasePayload(){
+  return {
+    visitor_id: VISITOR_ID,
+    session_id: SESSION_ID,
+    pathname: window.location.pathname || '/index.html',
+    referrer: document.referrer || '',
+    utm_source: QUERY.get('utm_source') || '',
+    utm_medium: QUERY.get('utm_medium') || '',
+    utm_campaign: QUERY.get('utm_campaign') || '',
+    device_type: getDeviceType(),
+    quiz_version: QUIZ_VERSION,
+    is_qa: IS_QA_TRAFFIC,
+  };
+}
+
+function trackEvent(eventType, details = {}){
+  if(!analyticsEnabled()) return;
+  const payload = {
+    event_type: eventType,
+    ...getAnalyticsBasePayload(),
+    ...details,
+  };
+  fetch(ANALYTICS_ENDPOINT, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload),
+    keepalive:true,
+  }).catch(() => {});
+}
+
+function trackPageViewOnce(){
+  if(hasTrackedPageView) return;
+  hasTrackedPageView = true;
+  trackEvent('page_view', {
+    metadata: {
+      query_mode: QUERY.toString() ? 'custom' : 'normal',
+      has_auto_answers: QUERY.has('answers'),
+      forced_broken_photo: QUERY.get('brokenPhoto') === '1',
+    }
+  });
+}
 
 function resetQuizState(){
   scores = new Array(CHARS.length).fill(0);
@@ -1297,6 +1378,11 @@ function startQuiz(){
   document.getElementById('result').style.display='none';
   document.getElementById('quiz').style.display='block';
   window.scrollTo(0,0);
+  trackEvent('quiz_start', {
+    metadata: {
+      question_count: Qs.length,
+    }
+  });
   render();
 }
 
@@ -1335,6 +1421,10 @@ function pick(idx){
 
 function advance(){
   if(picked===null)return;
+  trackEvent('question_answered', {
+    question_index: curQ,
+    answer_index: picked,
+  });
   Qs[curQ].opts[picked].s.forEach(([ci,pt])=>scores[ci]+=pt);
   curQ++;
   if(curQ>=Qs.length) showResult();
@@ -1371,23 +1461,29 @@ function showResult(){
   document.getElementById('rdesc').textContent=c.desc;
   document.getElementById('rtags').innerHTML=c.tags.map(t=>`<span class="r-tag">${t}</span>`).join('');
 
-  const nearby = rankedResults
+  const nearbyEntries = rankedResults
     .filter(item => item.idx !== finalIdx)
     .slice(0,2)
-    .map((item, offset) => {
+    .map((item) => {
       const person = CHARS[item.idx];
       const base = rankedResults[0].weighted || 1;
-      const pct = Math.max(61, Math.min(96, Math.round(item.weighted / base * 100)));
-      return `
+      return {
+        name: person.name,
+        title: person.title,
+        pct: Math.max(61, Math.min(96, Math.round(item.weighted / base * 100))),
+      };
+    });
+  const nearby = nearbyEntries
+    .map((item, offset) => `
         <div class="r-near">
           <div class="r-near-rank">TOP ${offset + 2}</div>
           <div class="r-near-copy">
-            <div class="r-near-name">${person.name}</div>
-            <div class="r-near-title">${person.title}</div>
+            <div class="r-near-name">${item.name}</div>
+            <div class="r-near-title">${item.title}</div>
           </div>
-          <div class="r-near-score">${pct}%</div>
-        </div>`;
-    }).join('');
+          <div class="r-near-score">${item.pct}%</div>
+        </div>`)
+    .join('');
   document.getElementById('rnearby').innerHTML = nearby;
 
   document.getElementById('rrels').innerHTML=`
@@ -1399,6 +1495,16 @@ function showResult(){
       <div class="r-rel-label">⚡ 天生克星</div>
       <div class="r-rel-name">${c.nemesis}</div>
     </div>`;
+
+  trackEvent('quiz_complete', {
+    result_name: c.name,
+    is_hidden_result: Boolean(c.isHidden),
+    metadata: {
+      nearby_matches: nearbyEntries,
+      soulmate: c.soulmate,
+      nemesis: c.nemesis,
+    }
+  });
 }
 
 async function copyResult(){
@@ -1423,16 +1529,38 @@ ${c.title}
 💫 灵魂伴侣：${c.soulmate}
 ⚡ 天生克星：${c.nemesis}
 
-—— 测测你是AI圈的哪位大佬？`;
+  —— 测测你是AI圈的哪位大佬？`;
   try{
     const copied = await writeClipboard(text);
+    trackEvent('share_copy', {
+      result_name: c.name,
+      is_hidden_result: Boolean(c.isHidden),
+      metadata: {
+        copy_success: copied,
+        nearby_matches: alt,
+      }
+    });
     showToast(copied ? getShareToastMessage() : '复制失败，请手动选择结果文案');
   }catch(error){
+    trackEvent('share_copy', {
+      result_name: c.name,
+      is_hidden_result: Boolean(c.isHidden),
+      metadata: {
+        copy_success: false,
+        nearby_matches: alt,
+      }
+    });
     showToast('复制失败，请手动选择结果文案');
   }
 }
 
 function retryQuiz(){
+  if(finalIdx !== null){
+    trackEvent('quiz_retry', {
+      result_name: CHARS[finalIdx]?.name || '',
+      is_hidden_result: Boolean(CHARS[finalIdx]?.isHidden),
+    });
+  }
   resetQuizState();
   const photo = document.getElementById('rphoto');
   document.getElementById('result').style.display='none';
@@ -1479,6 +1607,7 @@ function runAutoScenarioFromQuery(){
 }
 
 window.addEventListener('load', runAutoScenarioFromQuery);
+window.addEventListener('load', trackPageViewOnce);
 </script>
 </body>
 </html>

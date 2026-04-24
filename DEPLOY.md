@@ -5,9 +5,14 @@
 部署目录以当前根目录为准，至少包含：
 
 - `index.html`
+- `monitor/index.html`
+- `images/portraits/`
+- `functions/api/`
+- `d1/schema.sql`
 - `favicon.svg`
 - `README.md`
 - `DEPLOY.md`
+- `MONITORING.md`
 - `IMAGE_AUDIT.md`
 - `.nojekyll`
 
@@ -17,7 +22,7 @@
 
 ```bash
 git init
-git add index.html ai-boss-quiz-v2.html favicon.svg README.md DEPLOY.md IMAGE_AUDIT.md .gitignore .nojekyll
+git add index.html ai-boss-quiz-v2.html images favicon.svg README.md DEPLOY.md IMAGE_AUDIT.md .gitignore .nojekyll
 git commit -m "ship ai boss quiz"
 git branch -M main
 git remote add origin <你的 GitHub 仓库地址>
@@ -78,7 +83,28 @@ git push -u origin main
 
 项目根目录已经放了 `.nojekyll`，适合这类纯静态页面。
 
-## 4. 自定义域名
+重要说明：
+
+- GitHub Pages 只能托管静态测试页
+- 本仓库里的监控 API 依赖 Cloudflare Pages Functions，所以 **GitHub Pages 不能启用监控后台**
+
+## 4. 启用监控后台
+
+监控后台页路径：
+
+- `/monitor/`
+
+要让它真正有数据，需要额外做这几步：
+
+1. 创建 D1 数据库
+2. 执行 `d1/schema.sql`
+3. 在 Pages 项目里添加 D1 binding，变量名：`ANALYTICS_DB`
+4. 在 Pages 项目里添加 secret：`ADMIN_TOKEN`
+5. 重新部署
+
+完整步骤见 `MONITORING.md`
+
+## 5. 自定义域名
 
 ### Cloudflare Pages
 
@@ -91,7 +117,7 @@ git push -u origin main
 - 按 GitHub 官方文档补 DNS
 - 建议先做域名验证，再开启最终指向
 
-## 5. 这一步仍需要你手动做
+## 6. 这一步仍需要你手动做
 
 这些动作我不能替你完成：
 
@@ -100,4 +126,5 @@ git push -u origin main
 - push 到你的账号
 - 登录 Cloudflare
 - 在 Pages 后台点选项目和部署配置
+- 在 Pages 后台创建 D1 / 绑定 D1 / 设置 `ADMIN_TOKEN`
 - 接自定义域名 / 改 DNS

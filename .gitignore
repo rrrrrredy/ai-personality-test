@@ -2,6 +2,7 @@ Thumbs.db
 .DS_Store
 *.log
 .wrangler/
+.dev.vars
 .npm-cache/
 .playwright/
 landing-*.png

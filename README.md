@@ -1,10 +1,10 @@
 # AI人格测试
 
-一个可直接本地打开、也可直接部署到 GitHub Pages / Cloudflare Pages 的单文件静态测试页。主题文案是：测测你是AI圈的哪位大佬？
+一个可直接本地打开、也可直接部署到 GitHub Pages / Cloudflare Pages 的纯静态测试页。主题文案是：测测你是AI圈的哪位大佬？
 
 当前版本基于 `ai-boss-quiz-v2.html` 整理为可交付目录，主入口已切到 `index.html`，并补了以下交付项：
 
-- 本地可运行的单文件测试页
+- 本地可运行的纯静态测试页
 - 15 题完整答题流程
 - 结果页的第一像 / 第二像 / 第三像
 - 隐藏人物 Alan Turing 解锁逻辑
@@ -12,14 +12,19 @@
 - 手机竖屏布局收口
 - favicon / 基础 SEO / Open Graph
 - GitHub + Cloudflare Pages 部署说明
+- Cloudflare Pages Functions + D1 监控后台骨架
 
 ## 目录
 
 - `index.html`：最终部署入口
+- `monitor/index.html`：监控后台页
+- `functions/api/`：监控采集和统计 API
+- `d1/schema.sql`：监控数据库表结构
 - `ai-boss-quiz-v2.html`：原始基线快照
 - `favicon.svg`：站点图标
 - `README.md`：项目说明
 - `DEPLOY.md`：上线步骤
+- `MONITORING.md`：监控后台接入说明
 - `IMAGE_AUDIT.md`：人物图片审计记录
 - `.nojekyll`：GitHub Pages 静态直出兜底
 
@@ -85,6 +90,37 @@
 
 - 根目录保留 `index.html`
 - 仓库建议公开，尤其是 GitHub Free 场景
+
+## 监控后台
+
+如果你只想上线测试页，GitHub Pages 和 Cloudflare Pages 都可以。
+
+如果你要启用数据监控：
+
+- 需要走 **Cloudflare Pages Functions + D1**
+- 监控后台页路径是 `monitor/index.html`
+- 统计 API 在 `functions/api/collect.js` 和 `functions/api/stats.js`
+- 具体接入步骤看 `MONITORING.md`
+
+当前第一版已经埋了这些事件：
+
+- `page_view`
+- `quiz_start`
+- `question_answered`
+- `quiz_complete`
+- `share_copy`
+- `quiz_retry`
+
+当前后台可以看这些指标：
+
+- PV / UV
+- 开始人数 / 完成人数
+- 完成率 / 分享率
+- 结果人物分布
+- 题目推进分布
+- 来源分布
+- 设备分布
+- 最近完成记录
 
 ## 自定义域名
 
