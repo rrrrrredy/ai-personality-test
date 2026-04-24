@@ -2,6 +2,16 @@
 
 一个可直接本地打开、也可直接部署到 GitHub Pages / Cloudflare Pages 的纯静态测试页。主题文案是：测测你是AI圈的哪位大佬？
 
+## 在线地址
+
+- 测试站主页：[https://ai-personality-test.pages.dev/](https://ai-personality-test.pages.dev/)
+- 监控后台：[https://ai-personality-test.pages.dev/monitor/](https://ai-personality-test.pages.dev/monitor/)
+
+说明：
+
+- 监控后台页面已经部署到 Cloudflare Pages
+- 打开监控后台后，如果看到“等待 token”或接口报错，优先检查 `MONITORING.md` 里的 D1 与 `ADMIN_TOKEN` 配置
+
 当前版本基于 `ai-boss-quiz-v2.html` 整理为可交付目录，主入口已切到 `index.html`，并补了以下交付项：
 
 - 本地可运行的纯静态测试页

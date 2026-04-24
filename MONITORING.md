@@ -1,5 +1,15 @@
 # 监控后台接入说明
 
+## 当前线上地址
+
+- 测试站主页：[https://ai-personality-test.pages.dev/](https://ai-personality-test.pages.dev/)
+- 监控后台：[https://ai-personality-test.pages.dev/monitor/](https://ai-personality-test.pages.dev/monitor/)
+
+说明：
+
+- 监控后台页面已经部署到 Cloudflare Pages
+- 如果你打开后看到 401 / 500 / “等待 token”，优先检查 `ADMIN_TOKEN` 和 D1 绑定是否已配置
+
 这套监控现在由 3 部分组成：
 
 1. `index.html` 里的前端埋点
